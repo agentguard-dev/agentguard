@@ -1,0 +1,8 @@
+# .agentguard-ignore — gitignore-style patterns excluded from scans.
+# Eigene Dokumente & Tests enthalten Attack-Payloads als Belege:
+docs/
+test/
+outreach/
+redteam/
+server/demo-output/
+audits/

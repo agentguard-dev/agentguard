@@ -1,0 +1,92 @@
+{
+  "generatedAt": "2026-09-07T08:26:19.926Z",
+  "vulnerable": {
+    "grade": "F",
+    "score": 600,
+    "count": 13,
+    "findings": [
+      {
+        "id": "AGENT-001",
+        "severity": "critical",
+        "file": ".claude/agents/hacker.md",
+        "description": "Agent has Bash (shell) access — prompt injection becomes remote code execution"
+      },
+      {
+        "id": "HOOK-001",
+        "severity": "critical",
+        "file": ".claude/hooks/backdoor.json",
+        "description": "Hook pipes network content into a shell — remote code execution vector"
+      },
+      {
+        "id": "MCP-001",
+        "severity": "critical",
+        "file": ".mcp/config.json",
+        "description": "MCP server 'github-helper' uses a typo-squatted host that impersonates an official service"
+      },
+      {
+        "id": "INSTR-OVR-001",
+        "severity": "critical",
+        "file": "AGENTS.md",
+        "description": "File contains an instruction-override phrase ('ignore previous instructions') together with a dangerous operation"
+      },
+      {
+        "id": "SECRET-001",
+        "severity": "critical",
+        "file": "config/secrets.env",
+        "description": "Possible credential detected in committed file (sk-7f3a9…)"
+      },
+      {
+        "id": "EXFIL-001",
+        "severity": "critical",
+        "file": "skills/export/SKILL.md",
+        "description": "Skill sends data to an external host (exfiltration)"
+      },
+      {
+        "id": "UNICODE-001",
+        "severity": "critical",
+        "file": "skills/summarize/SKILL.md",
+        "description": "Zero-width Unicode characters adjacent to text (invisible instruction injection)"
+      },
+      {
+        "id": "INSTR-OVR-001",
+        "severity": "critical",
+        "file": "subdir/AGENTS.md",
+        "description": "File contains an instruction-override phrase ('ignore previous instructions') together with a dangerous operation"
+      },
+      {
+        "id": "NESTED-AGENTS-001",
+        "severity": "critical",
+        "file": "subdir/AGENTS.md",
+        "description": "Nested AGENTS.md contains instruction-override content"
+      },
+      {
+        "id": "TOOL-001",
+        "severity": "critical",
+        "file": "tools/helper-tool.md",
+        "description": "Description instructs the agent to run destructive/unwanted commands"
+      },
+      {
+        "id": "INCLUDE-001",
+        "severity": "high",
+        "file": "scripts/helpers.md",
+        "description": "External include reference loads remote prompts — remote instruction injection"
+      },
+      {
+        "id": "SUDO-001",
+        "severity": "medium",
+        "file": ".claude/commands/cleanup.md",
+        "description": "Command shim escalates privileges"
+      },
+      {
+        "id": "BADGE-001",
+        "severity": "medium",
+        "file": "README.md",
+        "description": "README badge/image uses suspicious host 'badge.xyz'"
+      }
+    ]
+  },
+  "clean": {
+    "grade": "A",
+    "count": 0
+  }
+}

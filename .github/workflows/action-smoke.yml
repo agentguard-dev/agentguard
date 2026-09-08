@@ -1,0 +1,17 @@
+name: Action Self-Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  action-smoke:
+    # Selbsttest: nutzt die Action wie ein Kunde (Ref @v0 nach Release)
+    # wird hier exakt so verwendet, wie es ein Kunde tun würde.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: agentguard-dev/agentguard@v0
+        with:
+          exit-on: critical

@@ -1,0 +1,31 @@
+name: "agentguard-security"
+description: "CI gate that scans agent configs (AGENTS.md, MCP, hooks, skills) for prompt injection, secrets and permission traps."
+author: "AgentGuard"
+branding:
+  icon: "shield"
+  color: "red"
+
+inputs:
+  path:
+    description: "Verzeichnis (relativ zum Repo), das gescannt werden soll"
+    required: false
+    default: "."
+  exit-on:
+    description: "Ab welcher Schwere der Job fehlschlägt (critical|high|medium|low|info|never)"
+    required: false
+    default: "critical"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "AgentGuard scan"
+      shell: "bash"
+      run: |
+        set -o pipefail
+        node "$GITHUB_ACTION_PATH/cli.js" scan \
+          --path "${GITHUB_WORKSPACE}/${{ inputs.path }}" \
+          --engine off \
+          --format summary \
+          --exit-on "${{ inputs.exit-on }}" \
+          --exclude "node_modules" \
+          --exclude ".git" >> "$GITHUB_STEP_SUMMARY"

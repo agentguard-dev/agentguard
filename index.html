@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentGuard — Der Türsteher für deine Coding-Agents</title>
+<style>
+  :root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--crit:#ff4d4f;--high:#ff9800;--med:#f0c674;--ok:#3fb950;--accent:#58a6ff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+  header{padding:80px 0 40px;border-bottom:1px solid var(--border)}
+  h1{font-size:2.6rem;margin:0 0 12px}
+  .sub{color:var(--muted);font-size:1.2rem;max-width:720px}
+  .badge{display:inline-block;padding:4px 12px;border-radius:999px;font-weight:600;font-size:.85rem}
+  .badge.ok{background:rgba(63,185,80,.15);color:var(--ok);border:1px solid var(--ok)}
+  .badge.crit{background:rgba(255,77,79,.15);color:var(--crit);border:1px solid var(--crit)}
+  .badge.warn{background:rgba(255,152,0,.12);color:var(--high);border:1px solid var(--high)}
+  .btn{display:inline-block;background:var(--accent);color:#0d1117;font-weight:700;padding:12px 22px;border-radius:8px;text-decoration:none;margin-top:20px}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);margin-left:10px}
+  section{padding:56px 0;border-bottom:1px solid var(--border)}
+  h2{margin-top:0}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px}
+  .card h3{margin-top:0;font-size:1.05rem}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);font-size:.92rem}
+  th{background:#21262d;font-weight:600}
+  code{background:#21262d;padding:2px 6px;border-radius:6px;font-size:.85em}
+  pre{background:#161b22;border:1px solid var(--border);border-radius:8px;padding:16px;overflow:auto}
+  .grade{font-size:3rem;font-weight:800}
+  .grade.f{color:var(--crit)} .grade.a{color:var(--ok)}
+  .muted{color:var(--muted)}
+  .price-card{border:2px solid var(--border);border-radius:12px;padding:24px;cursor:pointer;transition:.2s}
+  .price-card:hover{border-color:var(--accent)}
+  .price-card.highlight{border-color:var(--accent)}
+  .price-card .big{font-size:1.9rem;font-weight:800}
+  .price-card ul{margin:12px 0 0;padding-left:18px;color:var(--muted)}
+  .price-card li{margin:4px 0}
+  footer{padding:32px 0;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>AgentGuard 🛡️</h1>
+    <p class="sub">Dein Coding-Agent liest alles in deinem Repo. Auch die Anweisungen, die da nicht rein sollten. AgentGuard prüft bei jedem PR deine Agent-Konfiguration auf <strong>Prompt-Injection, Secrets und Permission-Traps</strong> — bevor sie gemergt werden.</p>
+    <a class="btn" href="#pricing">Audit anfragen — $499</a>
+    <a class="btn ghost" href="#install">Kostenlos einrichten</a>
+    <a class="btn ghost" href="#demo">Live-Demo ansehen</a>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>Warum das nötig ist</h2>
+    <p class="muted">Coding-Agents vertrauen der Dateien im Repo. Angreifer verstecken Anweisungen in Dateien — der Agent führt sie aus, niemand sieht es. Die Angriffe sind dokumentiert und real (AGENTS.md-Injection, MCP-Tool-Poisoning, Unicode-Verstecke).</p>
+    <div class="cards">
+      <div class="card"><h3>🔍 12 Regelklassen</h3><p>Instruction-Overrides, Zero-Width-Verstecke, MCP-Typo-Squatting, Hidden Hooks, Secrets, Permission-Traps und mehr.</p></div>
+      <div class="card"><h3>⚡ 1 Klick im CI</h3><p>GitHub Action mit A–F-Note. Kritische Findings blocken den Merge, saubere PRs laufen grün.</p></div>
+      <div class="card"><h3>🤖 Multi-Harness</h3><p>Ein Gate für Claude Code, Codex, Cursor, OpenCode — nicht nur für einen Hersteller.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <h2>Live-Demo: ein Repo mit 12 Attacken</h2>
+    <p class="muted">Dies ist ein deterministischer Testlauf gegen unser Angriffs-Fixture-Repo (12 Payloads) und das saubere Kontroll-Repo. Reproduzierbar mit <code>npm run demo</code>.</p>
+    <div id="demo-panel"><p class="muted">Lade Demo-Daten…</p></div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Einrichten in 60 Sekunden</h2>
+    <p>Füge in dein Repo eine Datei <code>.github/workflows/agentguard.yml</code> hinzu:</p>
+    <pre><code>name: AgentGuard
+on: pull_request
+jobs:
+  agentguard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: agentguard-dev/agentguard@v0
+        with:
+          exit-on: critical</code></pre>
+    <p class="muted"><strong>Free:</strong> öffentliche Repos, Report-Modus · <strong>Pro ($19/Repo/Monat):</strong> PR-Kommentare, Regel-Editor, Block-Modus · <strong>⭐ RedTeam-Report ($499/Quartal):</strong> monatlicher 3-Agenten-Angriff (Angreifer → Verteidiger → Auditor) mit priorisiertem Befund-Report — das wichtigste Feature für Teams, die Agenten in Produktion einsetzen.</p>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <h2>Preise — starte heute, nicht nächsten Monat</h2>
+    <div class="cards">
+      <div class="price-card highlight">
+        <h3>⚡ Sofort-Audit</h3>
+        <p class="big">$499 <span class="muted">einmalig</span></p>
+        <ul>
+          <li>Dein Repo wird vollständig gescannt</li>
+          <li>Priorisierter Befund mit Risiko-Matrix (24–48 h)</li>
+          <li>Fixliste mit konkreten PR-Vorschlägen</li>
+          <li>Perfekt als Einstieg für Teams</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <h3>Pro — PR-Bot</h3>
+        <p class="big">$19 <span class="muted">/Repo/Monat</span></p>
+        <ul>
+          <li>Automatische PR-Kommentare (Note + Findings)</li>
+          <li>Check-Run-Gate: kritische Findings blocken den Merge</li>
+          <li>Multi-Harness: Claude Code, Codex, Cursor, OpenCode</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <h3>RedTeam-Report</h3>
+        <p class="big">$499 <span class="muted">/Quartal</span></p>
+        <ul>
+          <li>3-Agenten-Angriff: Angreifer → Verteidiger → Auditor</li>
+          <li>Priorisierte Risiko-Matrix + Top-5-Handlungsliste</li>
+          <li>Monatlich wiederholbar — misst Fortschritt</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:20px"><a class="btn" href="https://github.com/agentguard-dev/agentguard/issues/new" target="_blank">Audit anfragen — kostenloser Erst-Scan</a>
+    <a class="btn ghost" href="https://github.com/agentguard-dev/agentguard" target="_blank">Code &amp; Beweise ansehen</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap muted">AgentGuard · MIT-lizenzierte Engine · <a style="color:var(--accent)" href="https://github.com/marketplace/actions/agentguard-security">GitHub Marketplace</a> · <a style="color:var(--accent)" href="https://agentguard-dev.github.io/agentguard/docs/REAL-WORLD-FINDINGS.md">Verifizierte Befunde</a></div>
+</footer>
+
+<script>
+(async () => {
+  try {
+    const res = await fetch('./web/demo-findings.json');
+    const data = await res.json();
+    const v = data.vulnerable;
+    const rows = v.findings.map(f =>
+      `<tr><td><span class="badge ${f.severity==='critical'?'crit':f.severity==='high'||f.severity==='medium'?'warn':'ok'}">${f.severity}</span></td>
+       <td><code>${f.id}</code></td><td><code>${f.file}</code></td><td>${f.description}</td></tr>`
+    ).join('');
+    let realWorld = '';
+    try {
+      const rw = await (await fetch('./web/real-world-findings.json')).json();
+      if (rw.scanned > 0) {
+        const grades = Object.entries(rw.grades).map(([g,n]) => `${g}: ${n}`).join(' · ');
+        realWorld = `<h3>Echtwelt-Status: ${rw.scanned} öffentliche Repos gescannt — ${rw.flagged} mit kritischen Befunden</h3>
+        <p class="muted">Notenverteilung: ${grades} — gefundene Muster: ${rw.sampleRules.join(', ') || '—'} (Repos anonymisiert)</p>`;
+      }
+    } catch (e) { /* Panel optional */ }
+    document.getElementById('demo-panel').innerHTML = realWorld + `
+      <p><span class="grade ${v.grade.toLowerCase()}">${v.grade}</span>
+      <span class="muted">Schweregrad-Notiz für das Angriffs-Repo — ${v.count} Findings. Sauberes Kontroll-Repo: Note ${data.clean.grade}, 0 Findings.</span></p>
+      <table><thead><tr><th>Grad</th><th>Regel</th><th>Datei</th><th>Befund</th></tr></thead><tbody>${rows}</tbody></table>`;
+  } catch (e) {
+    document.getElementById('demo-panel').innerHTML = '<p class="muted">Demo-Daten nicht gefunden — <code>npm run demo</code> im Repo ausführen.</p>';
+  }
+})();
+</script>
+</body>
+</html>

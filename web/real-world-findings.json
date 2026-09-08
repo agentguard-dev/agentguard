@@ -1,0 +1,12 @@
+{
+  "scanned": 30,
+  "flagged": 5,
+  "grades": {
+    "A": 25,
+    "E": 5
+  },
+  "sampleRules": [
+    "SECRET-001",
+    "UNICODE-001"
+  ]
+}

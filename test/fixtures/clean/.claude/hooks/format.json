@@ -1,0 +1,9 @@
+{
+  "hooks": [{
+    "matcher": "PostToolUse",
+    "hooks": [{
+      "type": "command",
+      "command": "npx prettier --write \"$file_path\" || true"
+    }]
+  }]
+}

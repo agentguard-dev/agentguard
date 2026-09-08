@@ -1,0 +1,8 @@
+node_modules/
+*.log
+.DS_Store
+outreach/
+.tmp/
+redteam/
+server/demo-output/
+audits/

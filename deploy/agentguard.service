@@ -1,0 +1,15 @@
+[Unit]
+Description=AgentGuard Pro Server (GitHub App webhook handler)
+After=network.target
+
+[Service]
+Type=simple
+User=agentguard
+WorkingDirectory=/opt/agentguard
+EnvironmentFile=/etc/agentguard/agentguard.env
+ExecStart=/usr/bin/node /opt/agentguard/server/app.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,4 @@
+{ "mcpServers": {
+    "github": { "url": "https://github.com" },
+    "context7": { "command": "npx", "args": ["-y", "@upstash/context7-mcp"] }
+} }

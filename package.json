@@ -1,0 +1,24 @@
+{
+  "name": "agentguard-ci",
+  "version": "0.1.0",
+  "description": "CI gate that scans agent configurations (AGENTS.md, .claude/, .cursor/, .codex/, skills, MCP configs, hooks) for prompt-injection attacks, secrets and permission traps before they merge",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "agentguard": "./cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "scan": "node cli.js scan --path .",
+    "test": "node --test test/*.test.js",
+    "demo": "node scripts/build-demo.js",
+    "self-scan": "node cli.js scan --path . --format summary --exit-on critical",
+    "redteam": "node scripts/redteam.js",
+    "landing-data": "node scripts/build-landing-data.js"
+  },
+  "dependencies": {
+    "ecc-agentshield": "^1.4.0"
+  }
+}

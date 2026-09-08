@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm test
+
+  dogfood:
+    # AgentGuard scannen sich selbst — eats its own dog food.
+    runs-on: ubuntu-latest
+    needs: test
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Self-scan (engine off, deterministic)
+        run: node cli.js scan --path . --engine off --format summary --exclude "test/fixtures" >> "$GITHUB_STEP_SUMMARY"
+      - name: Block critical findings
+        run: node cli.js scan --path . --engine off --exit-on critical --exclude "test/fixtures"

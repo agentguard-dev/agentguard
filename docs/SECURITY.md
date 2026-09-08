@@ -22,9 +22,33 @@
   (no `npm install`, no hooks, no shell).
 - **No network during scan:** `execFileSync` only calls the local engine binary
   with fixed arguments.
-- **Rule tuning as attack vector:** anyone who can write `.agentguard-ignore`
-  can suppress findings — same as `.eslintignore`. Documented as an accepted
-  privilege (repo write access cannot be prevented).
+- **Ignore-file is not trusted in CI:** a PR author could ship a
+  `.agentguard-ignore` that suppresses findings on their own PR. Therefore the
+  Action and the Pro server ignore `.agentguard-ignore` from PR content
+  (`--no-ignore` / `honorIgnoreFile: false`). Sanctioned exceptions go through
+  the Action's `exclude` input, which lives in the workflow file (base branch).
+
+## Known limitations
+
+Deterministic regex rules are a hygiene layer, not a security boundary —
+obfuscated or novel attacks can pass. Known gaps:
+
+- **Excluded directories are not scanned:** `node_modules/`, `.git/`, `dist/`,
+  `build/`, `vendor/`, `.next/`, … — agent configs placed there are invisible
+  to the scanner.
+- **Secret detection is format-based:** only known token shapes (sk-, ghp_,
+  GitHub PATs, npm, Stripe, Slack webhooks, AWS AKIA, Google AIza, Slack xox,
+  private-key blocks) are matched. Use a dedicated secrets scanner (e.g.
+  gitleaks) for high-entropy detection.
+- **Docs exemption:** files under `docs/` or named like `SECURITY.md`,
+  `REDTEAM.md`, `ATTACK.md` are exempt from the instruction-override rule so
+  threat write-ups are not flagged for quoting the attacks they describe.
+- **MCP allowlist:** unlisted-but-legitimate MCP hosts produce a medium finding;
+  the squatted-host heuristic is prefix-based and needs the allowlist to
+  disambiguate official brand hosts.
+- **Webhook/Pro limits:** webhook bodies are capped at 1 MB, tarball downloads
+  at 100 MB; tarballs containing symlinks, hardlinks, devices or FIFOs are
+  rejected (repo symlinks in PR tarballs are not supported).
 
 ## Reporting
 

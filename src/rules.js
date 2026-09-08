@@ -15,6 +15,10 @@ export const ALLOWED_MCP_HOSTS = [
   "mcp.ai.azure.com",
   "learn.microsoft.com",
   "context7.com",
+  // Offizielle GitHub-Infrastruktur-Hosts (kein Squatting, siehe MCP-001):
+  "githubusercontent.com",
+  "githubassets.com",
+  "githubpreview.dev",
 ];
 
 const ALLOWED_IMAGE_HOSTS =
@@ -66,6 +70,16 @@ function stripBom(content) {
 }
 
 // ---------------------------------------------------------------------------
+// Dokumentationsdateien, die Angriffe legitimerweise *beschreiben* (z. B.
+// SECURITY.md), dürfen nicht für das Zitieren der Phrasen geflaggt werden,
+// vor denen sie warnen.
+function isDocLike(rel) {
+  return (
+    /(^|\/)(docs?|documentation|examples)\//i.test(rel) ||
+    /(^|\/)(SECURITY|ADVISORY|THREAT-MODEL|REDTEAM|RED-TEAM|ATTACK|DEMO)[^/]*\.md$/i.test(rel)
+  );
+}
+
 // Rule 1 — Instruction override in instruction/markdown files (AGENTS.md & co.)
 export const INSTR_OVR_001 = {
   id: "INSTR-OVR-001",
@@ -74,6 +88,7 @@ export const INSTR_OVR_001 = {
     "Instruction-override phrase combined with a dangerous operation in an agent-facing file (AGENTS.md, skills, docs).",
   scan({ rel, content }) {
     if (!isMarkdown(rel) && !/agent|instructions/i.test(rel)) return null;
+    if (isDocLike(rel)) return null;
     const severity = hasOverrideAndOp(stripBom(content));
     if (!severity) return null;
     return finding(
@@ -204,6 +219,11 @@ export const SECRET_001 = {
       "AIza…": /AIza[0-9A-Za-z_-]{30,}/g,
       "AKIA…": /AKIA[0-9A-Z]{16}/g,
       "xox…": /xox[baprs]-[A-Za-z0-9]{10,}/g,
+      "github_pat_…": /github_pat_[A-Za-z0-9_]{22,}/g,
+      "npm_…": /npm_[A-Za-z0-9]{36}/g,
+      "Stripe…": /\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{16,}/g,
+      "Private-Key": /-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----/g,
+      "Slack-Webhook": /https:\/\/hooks\.slack\.com\/services\/T[A-Z0-9]{8,}\/B[A-Z0-9]{8,}\/[A-Za-z0-9]{20,}/gi,
     };
     const detected = [];
     let firstLine = null;

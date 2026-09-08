@@ -7,10 +7,10 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { scanRepo } from "../src/scanner.js";
 import { formatMarkdown } from "../src/findings.js";
+import { downloadWithLimit, extractTarball } from "../src/tarutil.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
@@ -21,15 +21,16 @@ function argValue(args, name, fallback) {
 }
 
 async function downloadAndExtract(repo, dir) {
-  const res = await fetch(`https://codeload.github.com/${repo}/tar.gz/main`);
+  const tar = path.join(dir, "repo.tar.gz");
+  let res = await fetch(`https://codeload.github.com/${repo}/tar.gz/main`);
   if (!res.ok) {
     const res2 = await fetch(`https://codeload.github.com/${repo}/tar.gz/master`);
     if (!res2.ok) throw new Error(`download failed (HTTP ${res.status}/${res2.status})`);
-    execSync(`curl -sL -o repo.tar.gz https://codeload.github.com/${repo}/tar.gz/master`, { cwd: dir });
-  } else {
-    fs.writeFileSync(path.join(dir, "repo.tar.gz"), Buffer.from(await res.arrayBuffer()));
+    res = res2;
   }
-  execSync("tar xzf repo.tar.gz --strip-components=1", { cwd: dir, stdio: "ignore" });
+  // Untrusted Tarballs: Größenlimit + Traversal-/Symlink-Prüfung (tarutil).
+  await downloadWithLimit(res, tar);
+  extractTarball(tar, dir, { stripComponents: 1 });
 }
 
 async function main() {

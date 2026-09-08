@@ -39,3 +39,18 @@ test("CLI report mode never fails the job", () => {
   });
   assert.match(out, /grade F/);
 });
+
+test("invalid --exit-on fails closed (exit 2, no silent pass)", () => {
+  let status = null;
+  let stderr = "";
+  try {
+    execFileSync("node", [CLI, "scan", "--path", VULN, "--engine", "off", "--exit-on", "banana"], {
+      stdio: ["ignore", "ignore", "pipe"],
+    });
+  } catch (e) {
+    status = e.status;
+    stderr = String(e.stderr ?? "");
+  }
+  assert.equal(status, 2, "invalid config must fail the job instead of passing");
+  assert.match(stderr, /Ungültiger Wert für --exit-on/);
+});

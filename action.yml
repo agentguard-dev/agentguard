@@ -14,18 +14,58 @@ inputs:
     description: "Ab welcher Schwere der Job fehlschlägt (critical|high|medium|low|info|never)"
     required: false
     default: "critical"
+  exclude:
+    description: "Zusätzliche Ausschluss-Globs, leerzeichengetrennt (gitignore-Stil)"
+    required: false
+    default: ""
 
 runs:
   using: "composite"
   steps:
     - name: "AgentGuard scan"
       shell: "bash"
+      env:
+        AG_PATH: ${{ inputs.path }}
+        AG_EXIT_ON: ${{ inputs.exit-on }}
+        AG_EXCLUDE: ${{ inputs.exclude }}
       run: |
         set -o pipefail
+
+        # Fail-closed: ungültige Eingaben dürfen das Gate nie still deaktivieren.
+        case "${AG_EXIT_ON}" in
+          critical|high|medium|low|info|never) ;;
+          *)
+            echo "❌ AgentGuard: Ungültiger Wert für 'exit-on': '${AG_EXIT_ON}' (erlaubt: critical|high|medium|low|info|never)" >&2
+            exit 2
+            ;;
+        esac
+        # Eingaben validieren, bevor sie in Shell-Strings landen (Injection-Schutz).
+        if ! printf '%s' "${AG_PATH}" | grep -Eq '^[A-Za-z0-9._/ -]*$'; then
+          echo "❌ AgentGuard: Ungültige Zeichen im 'path'-Input: '${AG_PATH}'" >&2
+          exit 2
+        fi
+        if [ -n "${AG_EXCLUDE}" ] && ! printf '%s' "${AG_EXCLUDE}" | grep -Eq '^[A-Za-z0-9._/* -]*$'; then
+          echo "❌ AgentGuard: Ungültige Zeichen im 'exclude'-Input: '${AG_EXCLUDE}'" >&2
+          exit 2
+        fi
+
+        # Fail-open-Warnungen: leere Workspaces und PR-eigene Ignore-Dateien melden.
+        if [ ! -d "${GITHUB_WORKSPACE}/${AG_PATH}/.git" ]; then
+          echo "⚠️  AgentGuard: Kein .git-Verzeichnis im Scan-Pfad gefunden — fehlt der actions/checkout-Schritt?" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        if [ -f "${GITHUB_WORKSPACE}/${AG_PATH}/.agentguard-ignore" ]; then
+          echo "⚠️  AgentGuard: .agentguard-ignore im PR wird ignoriert (Bypass-Schutz) — für Ausnahmen den 'exclude'-Input der Action nutzen." >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+        EXCL_ARGS=""
+        for p in ${AG_EXCLUDE}; do
+          EXCL_ARGS="${EXCL_ARGS} --exclude ${p}"
+        done
+
         node "$GITHUB_ACTION_PATH/cli.js" scan \
-          --path "${GITHUB_WORKSPACE}/${{ inputs.path }}" \
+          --path "${GITHUB_WORKSPACE}/${AG_PATH}" \
           --engine off \
           --format summary \
-          --exit-on "${{ inputs.exit-on }}" \
-          --exclude "node_modules" \
-          --exclude ".git" >> "$GITHUB_STEP_SUMMARY"
+          --exit-on "${AG_EXIT_ON}" \
+          --no-ignore \
+          ${EXCL_ARGS} >> "$GITHUB_STEP_SUMMARY"

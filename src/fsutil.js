@@ -26,9 +26,32 @@ const BINARY_EXT = new Set([
 
 const MAX_FILE_BYTES = 1_000_000;
 
+// Converts a gitignore-style glob to an anchored RegExp.
+// Strings are treated as globs; RegExp instances pass through unchanged.
+export function globToRegExp(glob) {
+  const base = glob.endsWith("/") ? glob.slice(0, -1) : glob;
+  // Split on "**", escape each segment, then rejoin with ".*".
+  // (Kein Sentinel-Zeichen nötig, das mit Escapes kollidieren könnte.)
+  const escaped = base
+    .split("**")
+    .map((part, i) => {
+      const inner = part
+        .replace(/[.+^${}()|[\]\\]/g, "\\$&")
+        .replace(/\*/g, "[^/]*")
+        .replace(/\?/g, "[^/]");
+      return i === 0 ? inner : `.*${inner}`;
+    })
+    .join("");
+  return new RegExp(`^${escaped}$|^${escaped}/`);
+}
+
+function toPathMatcher(pattern) {
+  return pattern instanceof RegExp ? pattern : globToRegExp(pattern);
+}
+
 export function* walkFiles(rootDir, { excludeDirs = [], customExcludes = [] } = {}) {
   const excluded = new Set([...DEFAULT_EXCLUDED_DIRS, ...excludeDirs]);
-  const custom = customExcludes.map((g) => new RegExp(g));
+  const custom = customExcludes.map(toPathMatcher);
 
   function* visit(absDir) {
     let entries;

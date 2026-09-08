@@ -2,7 +2,7 @@
 // and produces a normalized report.
 import fs from "node:fs";
 import path from "node:path";
-import { walkFiles, readText } from "./fsutil.js";
+import { walkFiles, readText, globToRegExp } from "./fsutil.js";
 import { RULES } from "./rules.js";
 import { scanWithEngine, isEngineAvailable } from "./engine.js";
 import { summarize } from "./findings.js";
@@ -23,21 +23,13 @@ export function loadIgnoreFile(rootDir) {
     .map(globToRegExp);
 }
 
-function globToRegExp(glob) {
-  const base = glob.endsWith("/") ? glob.slice(0, -1) : glob;
-  const escaped = base
-    .replace(/[.+^${}()|[\]\\]/g, "\\$&")
-    .replace(/\*\*/g, "\u0000")
-    .replace(/\*/g, "[^/]*")
-    .replace(/\?/g, "[^/]")
-    .replace(/\u0000/g, ".*");
-  return new RegExp(`^${escaped}$|^${escaped}/`);
-}
-
-export function scanRepo(rootDir, { useEngine = true, excludeDirs = [], customExcludes = [] } = {}) {
+export function scanRepo(
+  rootDir,
+  { useEngine = true, excludeDirs = [], customExcludes = [], honorIgnoreFile = true } = {}
+) {
   rootDir = path.resolve(rootDir);
   const findings = [];
-  const ignore = [...loadIgnoreFile(rootDir), ...customExcludes];
+  const ignore = [...(honorIgnoreFile ? loadIgnoreFile(rootDir) : []), ...customExcludes];
 
   for (const file of walkFiles(rootDir, { excludeDirs, customExcludes: ignore })) {
     const content = readText(file.abs);

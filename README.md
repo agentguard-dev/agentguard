@@ -88,11 +88,11 @@ Repo → walkFiles (exclude node_modules/.git/…) → 12 deterministic rules
 
 ## Docs
 
-- [Architecture ADR-001](docs/ADR-001-architecture.md)
-- [Security & threat model](docs/SECURITY.md)
-- [Verified real-world findings](docs/REAL-WORLD-FINDINGS.md)
-- [Pro server (PR bot)](docs/PRO-LAUNCH.md)
-- [RedTeam pipeline](docs/REDTEAM.md)
+- [Architecture ADR-001](docs/ADR-001-architecture.md) · [DE](docs/de/ADR-001-architecture.md)
+- [Security & threat model](docs/SECURITY.md) · [DE](docs/de/SECURITY.md)
+- [Verified real-world findings](docs/REAL-WORLD-FINDINGS.md) · [DE](docs/de/REAL-WORLD-FINDINGS.md)
+- [Pro server (PR bot)](docs/PRO-LAUNCH.md) · [DE](docs/de/PRO-LAUNCH.md)
+- [RedTeam pipeline](docs/REDTEAM.md) · [DE](docs/de/REDTEAM.md)
 
 ## License
 

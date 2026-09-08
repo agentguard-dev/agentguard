@@ -1,47 +1,49 @@
-# RedTeam-Pipeline — AgentGuard Pro Feature ($499/Quartal)
+# RedTeam pipeline — AgentGuard Pro Feature
 
-> Drei Agenten greifen dein Repo aktiv an: **Angreifer (Red Team)** sucht
-> Exploit-Ketten, **Verteidiger (Blue Team)** prüft jede Behauptung ehrlich,
-> **Auditor** synthetisiert den priorisierten Report.
+> **English** · [Deutsch](de/REDTEAM.md)
 
-## Nutzung
+> Three agents actively attack your repo: **attacker (red team)** searches
+> exploit chains, **defender (blue team)** honestly checks every claim,
+> **auditor** synthesizes the prioritized report.
+
+## Usage
 
 ```bash
-# 1) Nur Prompts erzeugen (kostenlos, deterministisch):
-node scripts/redteam.js --repo <pfad> --dry-run
+# 1) Generate prompts only (free, deterministic):
+node scripts/redteam.js --repo <path> --dry-run
 
-# 2) Vollständigen Lauf (3 Agenten via claude -p / DeepSeek):
-node scripts/redteam.js --repo <pfad>            # Ausgabe: ./redteam/REDTEAM-REPORT.md
+# 2) Full run (3 agents via claude -p / DeepSeek):
+node scripts/redteam.js --repo <path>            # output: ./redteam/REDTEAM-REPORT.md
 ```
 
-Resume-Logik: Bereits fertige Agenten-Ausgaben (`attacker.md` / `defender.md`)
-werden beim nächsten Lauf übersprungen — ein Abbruch ist also nie verloren.
+Resume logic: finished agent outputs (`attacker.md` / `defender.md`) are
+skipped on the next run — an interrupted run is never lost.
 
-## Konfiguration
+## Configuration
 
-| Variable | Default | Wirkung |
+| Variable | Default | Effect |
 |---|---|---|
-| `AGENTGUARD_REDTEAM_BIN` | `claude` | LLM-Runner (z. B. eigener Gateway-Wrapper) |
-| `CLAUDE_CODE_EFFORT_LEVEL` | `medium` | Denk-Tiefe der Agenten (Pipeline-Praxis: medium = schneller & günstiger) |
+| `AGENTGUARD_REDTEAM_BIN` | `claude` | LLM runner (e.g. custom gateway wrapper) |
+| `CLAUDE_CODE_EFFORT_LEVEL` | `medium` | Agent reasoning depth (pipeline practice: medium = fast & cheap) |
 
-## Was der Kunde bekommt (Report)
+## What the client receives (report)
 
-- Executive Summary (3–5 Sätze, ohne Fachjargon)
-- Risiko-Matrix (Priorität, Wahrscheinlichkeit, Impact, Empfehlung)
-- Top-5-Handlungsliste mit Aufwand-Schätzungen
-- Grenzen & offene Fragen (ehrliche Selbstbegrenzung)
+- Executive summary (3–5 sentences, no jargon)
+- Risk matrix (priority, probability, impact, recommendation)
+- Top-5 action list with effort estimates
+- Limitations & open questions (honest self-limitation)
 
-## Preis & Lieferumfang
+## Price & delivery
 
-| Was du bekommst | Details |
+| What you get | Details |
 |---|---|
-| Monatlicher 3-Agenten-Angriff | Angreifer → Verteidiger → Auditor |
-| Report | Executive Summary, Risiko-Matrix, Top-5-Handlungsliste |
-| Preis | $499/Quartal (Team-Pakete auf Anfrage) |
+| Monthly 3-agent attack | attacker → defender → auditor |
+| Report | executive summary, risk matrix, top-5 action list |
+| Price | $499/quarter (team bundles on request) |
 
-## Demo-Report
+## Demo report
 
-Der verifizierte Demo-Lauf gegen unser 12-Payloads-Fixture-Repo
-(alle 3 Agenten-Ausgaben + finaler Report) liegt nach dem ersten
-vollständigen Lauf in `docs/REDTEAM-DEMO.md` (falls vorhanden) bzw.
-in `redteam/` (lokal, nicht im Repo, weil er Angriffs-Payloads dokumentiert).
+The verified demo run against our 12-payload fixture repo is available as
+[REDTEAM-DEMO-EXAMPLE.md](de/REDTEAM-DEMO-EXAMPLE.md) (German, with the
+example payloads documented — run locally with `node scripts/redteam.js
+--repo test/fixtures/vulnerable`).

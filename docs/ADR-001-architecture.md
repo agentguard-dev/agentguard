@@ -1,57 +1,61 @@
-# ADR-001 — Architektur & Technologie-Entscheidungen
+# ADR-001 — Architecture & Technology Decisions
 
-Status: angenommen (2026-09-07)
+> **English** · [Deutsch](de/ADR-001-architecture.md)
 
-## Kontext
+Status: accepted (2026-09-07)
 
-Ein einfach zu installierendes, solo betreibbares Sicherheits-Gate für
-Agent-Konfigurationen in Repos. Kernanforderungen: deterministische Ergebnisse,
-keine externen Infrastruktur-Abhängigkeiten im Pfad zur ersten Erkennung,
-testbar gegen ein reproduzierbares Angriffs-Fixture, GitHub-Actions-kompatibel.
+## Context
 
-## Entscheidungen
+A security gate for agent configurations in repos that must be easy to install
+and operable by a single maintainer. Core requirements: deterministic results,
+no external infrastructure dependencies on the path to first detection,
+testable against a reproducible attack fixture, GitHub Actions compatible.
 
-### 1. Node.js ≥ 18, reine Standardbibliothek im Scan-Kern
-Kein Build-Step, keine Transpiler. `node --test` als Testrunner. Begründung:
-GitHub-Runner haben Node; Zero-Build = Zero-Install-Friction.
+## Decisions
 
-### 2. Eigene deterministische Regel-Engine als Primärschicht
-`src/rules.js`: 12 Regelklassen als pure Funktionen über Dateiinhalt. Begründung:
-- Reproduzierbar & testbar (12/12 Fixtures, 0 FP)
-- Kein LLM im Pfad → kein „Tool selbst prompt-injectable"
-- Funktioniert ohne node_modules (wichtig für die GitHub Action)
+### 1. Node.js ≥ 18, standard library only in the scan core
+No build step, no transpilers. `node --test` as the test runner (currently
+36 tests). Rationale: GitHub runners have Node; zero build = zero install
+friction.
 
-### 3. ecc-agentshield als sekundäre Best-Effort-Schicht
-`src/engine.js`: CLI-Adapter, JSON-Ausgabe, Fehler-tolerant (nie fatal).
-Begründung: 102 gepflegte Regeln als Bonus; Engine ist Claude-Home-orientiert,
-deshalb niemals die Primärquelle. Abschaltbar via `AGENTGUARD_NO_ENGINE=1`
-(und in Tests/Action deaktiviert für Determinismus).
+### 2. Own deterministic rule engine as the primary layer
+`src/rules.js`: 12 rule classes as pure functions over file contents. Rationale:
 
-### 4. Persistenz: keine in Woche 1
-Konsistenz- und Settings-Persistenz erst mit der Web-App (Woche 5+). Die CLI
-ist zustandslos; `.agentguard-ignore` ist die einzige Konfigurationsdatei
-(Versionierung im Repo = einfachste Kollaboration).
+- Reproducible & testable (12/12 fixtures, 0 false positives)
+- No LLM in the path → the tool itself cannot be prompt-injected
+- Works without node_modules (important for the GitHub Action)
 
-### 5. GitHub Action als Composite-Step mit Summary-Ausgabe
-Kein Container-Publish nötig: `action.yml` nutzt `$GITHUB_ACTION_PATH`,
-schreibt Findings nach `$GITHUB_STEP_SUMMARY` und lässt den Exit-Code als Gate
-wirken. PR-Kommentare (Pro-Feature) kommen später via GitHub-App.
+### 3. ecc-agentshield as an optional best-effort layer
+`src/engine.js`: CLI adapter, JSON output, fails open (never fatal).
+Rationale: ~100 maintained rules as a bonus; the engine is Claude-home
+oriented, therefore never the primary source. Disable via
+`AGENTGUARD_NO_ENGINE=1` (used in tests/actions for determinism).
 
-### 6. A–F-Grading über gewichtete Scores
-critical=100, high=60, medium=30, low=10, info=3. Schwellen: B ≥ 1, C ≥ 20,
-D ≥ 60, E ≥ 100, F ≥ 250. Grade fließen in Summary und Landingpage-Demo.
+### 4. No persistence in week 1
+State and settings persistence only with the web app (week 5+). The CLI is
+stateless; `.agentguard-ignore` is the only config file (versioned in the repo
+= simplest collaboration).
 
-## Verworfene Alternativen
+### 5. GitHub Action as composite step with summary output
+No container publish needed: `action.yml` uses `$GITHUB_ACTION_PATH`, writes
+findings to `$GITHUB_STEP_SUMMARY` and lets the exit code act as the gate.
+PR comments (Pro feature) come later via the GitHub App.
 
-| Alternative | Grund der Ablehnung |
+### 6. A–F grading via weighted scores
+critical=100, high=60, medium=30, low=10, info=3. Thresholds: B ≥ 1, C ≥ 20,
+D ≥ 60, E ≥ 100, F ≥ 250. Grades feed summary, landing page and demo.
+
+## Rejected alternatives
+
+| Alternative | Reason rejected |
 |---|---|
-| Alles in einer GitHub Action (kein CLI) | Nicht lokal testbar, kein Demo-Material, kein Dogfooding |
-| LLM-Analyse im Scan-Pfad (Opus-Analyse) | Kosten, Nicht-Determinismus, eigener Angriffsvektor |
-| Supabase/Datenbank ab Tag 1 | Persistenz wird erst mit Kunden nötig; SQLite genügt |
-| Python/Go | Node-Ökosystem + bereits installierte Engine |
+| Everything in one GitHub Action (no CLI) | Not testable locally, no demo material, no dogfooding |
+| LLM analysis in the scan path | Cost, non-determinism, own attack vector |
+| Database from day 1 | Persistence only needed with customers; CLI suffices |
+| Python/Go | Node ecosystem + engine already installed |
 
-## Konsequenzen
+## Consequences
 
-- Scan-Kern ist dependency-frei: die Action braucht kein `npm ci`
-- Tests laufen in < 100 ms → CI bleibt schnell
-- Pro-Features (Kommentare, Regeln-UI, RedTeam) docken an die CLI an, ohne den Kern zu ändern
+- Scan core is dependency-free: the Action needs no `npm ci`
+- Tests run in < 100 ms → CI stays fast
+- Pro features (comments, rules UI, RedTeam) attach to the CLI without changing the core

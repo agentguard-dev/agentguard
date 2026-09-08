@@ -88,11 +88,11 @@ Repo → walkFiles (exclude node_modules/.git/…) → 12 deterministische Regel
 
 ## Dokumentation
 
-- [Architektur-ADR-001](docs/ADR-001-architecture.md)
-- [Sicherheit & Bedrohungsmodell](docs/SECURITY.md)
-- [Verifizierte Echtwelt-Befunde](docs/REAL-WORLD-FINDINGS.md)
-- [Pro-Server (PR-Bot)](docs/PRO-LAUNCH.md)
-- [RedTeam-Pipeline](docs/REDTEAM.md)
+- [Architektur-ADR-001](docs/de/ADR-001-architecture.md) · [EN](docs/ADR-001-architecture.md)
+- [Sicherheit & Bedrohungsmodell](docs/de/SECURITY.md) · [EN](docs/SECURITY.md)
+- [Verifizierte Echtwelt-Befunde](docs/de/REAL-WORLD-FINDINGS.md) · [EN](docs/REAL-WORLD-FINDINGS.md)
+- [Pro-Server (PR-Bot)](docs/de/PRO-LAUNCH.md) · [EN](docs/PRO-LAUNCH.md)
+- [RedTeam-Pipeline](docs/de/REDTEAM.md) · [EN](docs/REDTEAM.md)
 
 ## Lizenz
 

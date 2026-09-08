@@ -1,3 +1,5 @@
+> [English](../REDTEAM.md) · **Deutsch** (Beispiel-Report)
+
 Ich habe alle Streitpunkte verifiziert und kann den Report jetzt abschließend schreiben. Kurze Verifikationsergebnisse, die direkt in die Synthese einfließen:
 
 - **Zero-Width-Zeichen:** exakt **2** (nicht 4) — je eines zwischen „PREVIOUS/INSTRUCTIONS" (U+200D) und „first/run" (U+200B). → Blue Team korrekt.

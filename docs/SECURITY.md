@@ -1,29 +1,33 @@
-# SECURITY.md — Selbst-Audit von AgentGuard
+# SECURITY.md — AgentGuard Self-Audit
 
-> AgentGuard ist selbst ein Sicherheits-Tool. Diese Datei dokumentiert den
-> laufenden Selbst-Audit. Stand: Initial-Scan (Woche 1). Regenerierung:
-> `npm run self-scan` (Engine off für Determinismus) — Befunde werden hier gepflegt.
+> **English** · [Deutsch](de/SECURITY.md)
 
-## Audit-Ergebnis (Initial)
+> AgentGuard is itself a security tool. This document describes the ongoing
+> self-audit. Regenerate with `npm run self-scan` (engine off for
+> determinism) — findings are maintained here.
 
-| Bereich | Status | Hinweis |
+## Audit status (initial)
+
+| Area | Status | Note |
 |---|---|---|
-| Secrets in Git-History / Dateien | ✅ sauber | Keine Credentials in Fixtures: alle Keys sind Fake (Format-aber nicht Content-echt, z. B. `sk-7f3a…` nur im Fixture) |
-| Regel-Datei selbst nicht injizierbar | ✅ | Regeln sind Code, keine Prompts; kein LLM im Pfad |
-| Netzwerk | ✅ keins im Scan-Pfad | Engine-Adapter ruft nur das lokale `agentshield`-Binary |
-| Sandbox | ⚠️ bekannt | Engine-`--sandbox`-Modus ist ein optionales Feature, nicht der Default; CLI führt keinerlei Repo-Code aus (nur Lesen) |
-| Webhook (später, GitHub-App) | 🔜 ausstehend | HMAC-Verifikation ist Pflicht vor Pro-Launch |
+| Secrets in git history / files | ✅ clean | No credentials: all fixture keys are fake (format-valid but not real content) |
+| Rule file itself cannot be injected | ✅ | Rules are code, not prompts; no LLM in the path |
+| Network | ✅ none in the scan path | Engine adapter only calls the local `agentshield` binary |
+| Sandbox | ⚠️ known | Engine `--sandbox` mode is optional, not the default; the CLI never executes repo code (read-only) |
+| Webhook (later, GitHub App) | 🔜 pending | HMAC verification required before any Pro launch (implemented in server/app.js) |
 
-## Bedrohungsmodell (was der Scanner selbst NICHT tut)
+## Threat model (what the scanner does NOT do)
 
-- **Kein Code-Execution:** Der Scanner liest Dateien als Text; er führt nie
-  Inhalte des Ziel-Repos aus (kein `npm install`, keine Hooks, keine Shell).
-- **Kein Netzwerk im Scan:** Bildschirmtext; `execFileSync` ruft nur die
-  lokale Engine-Binary mit festen Argumenten auf.
-- **Regel-Tuning als Angriffsvektor:** Wer `.agentguard-ignore` schreiben kann,
-  kann Findings unterdrücken — genau wie `.eslintignore`. Ist im Modell
-  dokumentiert (Privileg = Repo-Write, nicht zu verhindern).
+- **No code execution:** reads files as text; never executes target repo content
+  (no `npm install`, no hooks, no shell).
+- **No network during scan:** `execFileSync` only calls the local engine binary
+  with fixed arguments.
+- **Rule tuning as attack vector:** anyone who can write `.agentguard-ignore`
+  can suppress findings — same as `.eslintignore`. Documented as an accepted
+  privilege (repo write access cannot be prevented).
 
-## Verantwortungsvolle Offenlegung
+## Reporting
 
-Findings an: `security@agentguard.example` (Platzhalter bis GitHub-Repo existiert).
+To report a security issue, open a private ticket on this repository's issues
+or contact the maintainer via the repo. Please describe the impact and how to
+reproduce; we respond within 7 days.

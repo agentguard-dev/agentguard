@@ -1,31 +1,33 @@
-# Echtwelt-Befunde (30-Repo-Scan, v0.1.3)
+# Real-world findings (30-repo scan, v0.1.3+)
 
-> Verifizierte Befunde aus dem Outreach-Lauf über GitHub-Code-Suche
-> ("AGENTS.md in:path", 30 öffentliche Repos). Jeder Befund wurde manuell
-> am Byte-Kontext geprüft — das ist der Unterschied zwischen Alarmismus
-> und evidenzbasiertem Scanning.
+> **English** · [Deutsch](de/REAL-WORLD-FINDINGS.md)
 
-## Ergebnis-Überblick
+> Verified findings from a scan run over GitHub code search
+> ("AGENTS.md in:path", 30 public repos). Every finding was checked manually
+> at byte level — that is the difference between alarmism and evidence-based
+> scanning.
 
-| Repo | Note | Befund | Einschätzung |
+## Overview
+
+| Repo | Grade | Finding | Assessment |
 |---|---|---|---|
-| [WecomTeam/wecom-cli](https://github.com/WecomTeam/wecom-cli) | E | ZWSP (U+200B) **direkt vor einer bash-Code-Block** in `docs/e2e/DESC_SPEC.md` | ⚠️ **Höchst verdächtig** — Agenten-Spec: unsichtbares Zeichen vor ausführbarem Block |
-| [joske/yserver](https://github.com/joske/yserver) | E | ZWSP mitten im Satz einer Agenten-Spec (`arm/␣spin`) in `docs/superpowers/specs/…md` | ⚠️ verdächtig — exakt das Injection-Muster (oder Abschreib-Artefakt) |
-| [GoogleContainerTools/config-sync](https://github.com/GoogleContainerTools/config-sync) | E | ZWSP am Zeilenende in `examples/post-sync/README.md` | Artefakt-artig, Regel korrekt |
-| [InvoiceShelf/InvoiceShelf](https://github.com/InvoiceShelf/InvoiceShelf) | E | ZWSP in `lang/ru.json` (Übersetzungsdatei) | Artefakt-artig, Regel korrekt |
-| [nextcloud/android](https://github.com/nextcloud/android) | E | Committeter Google-API-Key `AIzaSy…` in `values/setup.xml` | Committed credential; bei Android-Client-Keys branchenüblich, Risiko kontextabhängig |
+| [WecomTeam/wecom-cli](https://github.com/WecomTeam/wecom-cli) | E | ZWSP (U+200B) **directly before a bash code block** in `docs/e2e/DESC_SPEC.md` | ⚠️ **highly suspicious** — agent-facing spec: invisible char before executable block |
+| [joske/yserver](https://github.com/joske/yserver) | E | ZWSP mid-sentence in an agent spec (`arm/␣spin`) in `docs/superpowers/specs/…md` | ⚠️ suspicious — exactly the injection pattern (or a copy/paste artifact) |
+| [GoogleContainerTools/config-sync](https://github.com/GoogleContainerTools/config-sync) | E | ZWSP at line end in `examples/post-sync/README.md` | artifact-like; rule correct |
+| [InvoiceShelf/InvoiceShelf](https://github.com/InvoiceShelf/InvoiceShelf) | E | ZWSP in `lang/ru.json` (translation file) | artifact-like; rule correct |
+| [nextcloud/android](https://github.com/nextcloud/android) | E | Committed Google API key `AIzaSy…` in `values/setup.xml` | committed credential; common for Android client keys, risk is context-dependent |
 
-## Methodik (warum man dem Material trauen kann)
+## Methodology (why the material can be trusted)
 
-1. Code-Suche mit verifiziertem Token → echte Repos, die AGENTS.md enthalten
-2. Tarball-Checkout → Scan mit deterministischen Regeln
-3. **Manuelle Byte-Inspektion jedes kritischen Fundes** (Python-Ausgabe mit
-   Hex-Codepoint + Kontext)
-4. Fehlalarme → Regel-Präzisierung + Regression-Test (v0.1.1 → v0.1.3)
+1. Code search with a verified token → real repos that contain AGENTS.md
+2. Tarball checkout → scan with deterministic rules
+3. **Manual byte inspection of every critical finding** (Python output with
+   hex codepoint + context)
+4. False positives → rule refinement + regression test (v0.1.1 → v0.1.4)
 
-## Nutzung
+## Usage
 
-Alle Befunde wurden lesend und ohne Ausführung von Repo-Code gewonnen.
-Ein Befund ist ein **Muster-Hinweis** (im Zweifel Artefakt ≠ Absicht) —
-betroffene Maintainer erhalten die byte-genaue Stelle als Diff. Das ist
-der Unterschied zwischen Alarmismus und evidenzbasiertem Scanning.
+All findings were obtained read-only and without executing repo code.
+A finding is a **pattern hint** (possibly artifact ≠ intention) — affected
+maintainers get the byte-exact location as a diff. That is the difference
+between alarmism and evidence-based scanning.

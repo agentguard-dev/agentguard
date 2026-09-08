@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentGuard — The Multi-Harness Gate for Agent Configurations</title>
+<style>
+  :root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--crit:#ff4d4f;--high:#ff9800;--med:#f0c674;--ok:#3fb950;--accent:#58a6ff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+  header{padding:80px 0 40px;border-bottom:1px solid var(--border)}
+  h1{font-size:2.6rem;margin:0 0 12px}
+  .sub{color:var(--muted);font-size:1.2rem;max-width:720px}
+  .badge{display:inline-block;padding:4px 12px;border-radius:999px;font-weight:600;font-size:.85rem}
+  .badge.ok{background:rgba(63,185,80,.15);color:var(--ok);border:1px solid var(--ok)}
+  .badge.crit{background:rgba(255,77,79,.15);color:var(--crit);border:1px solid var(--crit)}
+  .badge.warn{background:rgba(255,152,0,.12);color:var(--high);border:1px solid var(--high)}
+  .btn{display:inline-block;background:var(--accent);color:#0d1117;font-weight:700;padding:12px 22px;border-radius:8px;text-decoration:none;margin-top:20px}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);margin-left:10px}
+  section{padding:56px 0;border-bottom:1px solid var(--border)}
+  h2{margin-top:0}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px}
+  .card h3{margin-top:0;font-size:1.05rem}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);font-size:.92rem}
+  th{background:#21262d;font-weight:600}
+  code{background:#21262d;padding:2px 6px;border-radius:6px;font-size:.85em}
+  pre{background:#161b22;border:1px solid var(--border);border-radius:8px;padding:16px;overflow:auto}
+  .grade{font-size:3rem;font-weight:800}
+  .grade.f{color:var(--crit)} .grade.a{color:var(--ok)}
+  .muted{color:var(--muted)}
+  .price-card{border:2px solid var(--border);border-radius:12px;padding:24px;cursor:pointer;transition:.2s}
+  .price-card:hover{border-color:var(--accent)}
+  .price-card.highlight{border-color:var(--accent)}
+  .price-card .big{font-size:1.9rem;font-weight:800}
+  .price-card ul{margin:12px 0 0;padding-left:18px;color:var(--muted)}
+  .price-card li{margin:4px 0}
+  footer{padding:32px 0;color:var(--muted);font-size:.9rem}
+  .lang{position:fixed;top:12px;right:18px;z-index:9;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 14px;font-size:.9rem}
+  .lang a{color:var(--muted);text-decoration:none;margin:0 4px}
+  .lang a.active{color:var(--accent);font-weight:700}
+</style>
+  <meta name="description" content="AgentGuard: the multi-harness CI gate for agent configurations. Scans AGENTS.md, skills, MCP servers &amp; hooks for prompt injection, secrets and permission traps — critical findings block the merge.">
+  <meta property="og:title" content="AgentGuard — The Multi-Harness Gate for Agent Configurations">
+  <meta property="og:description" content="CI gate for AGENTS.md, skills, MCP servers &amp; hooks (Claude Code, Codex, Cursor, OpenCode) — proven by a 30-repo real-world scan. Critical findings block the merge.">
+  <meta property="og:url" content="https://agentguard-dev.github.io/agentguard/index-en.html">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AgentGuard — Multi-Harness Gate for Agent Configurations">
+  <meta name="twitter:description" content="Prompt injection in AGENTS.md, MCP &amp; hooks? AgentGuard catches it on the PR — before it merges.">
+</head>
+<body>
+<div class="lang"><a href="index.html">DE</a> | <a href="index-en.html" class="active">EN</a></div>
+<header>
+  <div class="wrap">
+    <h1>AgentGuard 🛡️ — The Multi-Harness Gate for Agent Configurations</h1>
+    <p class="sub">A CI gate for <strong>AGENTS.md, skills, MCP servers &amp; hooks</strong> — across <strong>Claude Code, Codex, Cursor and OpenCode</strong> equally. Deterministic rules (12 classes, 36 tests), proven by a 30-repo real-world scan. Critical findings block the merge — or get the 3-agent RedTeam report.</p>
+    <a class="btn" href="#pricing">Request an audit — $499</a>
+    <a class="btn ghost" href="#install">Set up free</a>
+    <a class="btn ghost" href="#demo">See live demo</a>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>Why this exists</h2>
+    <p class="muted">Coding agents trust the files in your repo. Attackers hide instructions inside files — the agent executes them, nobody sees it. The attacks are documented and real (AGENTS.md injection, MCP tool poisoning, Unicode hiding).</p>
+    <div class="cards">
+      <div class="card"><h3>🔍 12 rule classes</h3><p>Instruction overrides, zero-width hiding, MCP typo-squatting, hidden hooks, secrets, permission traps and more.</p></div>
+      <div class="card"><h3>⚡ 1-click CI</h3><p>GitHub Action with an A–F grade. Critical findings block the merge, clean PRs stay green.</p></div>
+      <div class="card"><h3>🤖 Multi-harness</h3><p>One gate for Claude Code, Codex, Cursor, OpenCode — not just for one vendor.</p></div>
+      <div class="card"><h3>📊 Proof over claims</h3><p>30 public repos scanned, 5 with critical findings — byte-verified, every rule backed by regression tests.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <h2>Live demo: a repo with 12 attacks</h2>
+    <p class="muted">A deterministic test run against our attack fixture repo (12 payloads) and the clean control repo. Reproducible with <code>npm run demo</code>.</p>
+    <div id="demo-panel"><p class="muted">Loading demo data…</p></div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Setup in 60 seconds</h2>
+    <p>Add a file <code>.github/workflows/agentguard.yml</code> to your repo:</p>
+    <pre><code>name: AgentGuard
+on: pull_request
+jobs:
+  agentguard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: agentguard-dev/agentguard@v0
+        with:
+          exit-on: critical</code></pre>
+    <p class="muted"><strong>Free:</strong> public repos, report mode · <strong>Pro ($19/repo/mo):</strong> PR comments, rule editor, block mode · <strong>⭐ RedTeam report ($499/quarter):</strong> monthly 3-agent attack (attacker → defender → auditor) with a prioritized report — the key feature for teams running agents in production.</p>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <h2>Pricing — start today, not next month</h2>
+    <div class="cards">
+      <div class="price-card highlight">
+        <h3>⚡ Instant audit</h3>
+        <p class="big">$499 <span class="muted">one-time</span></p>
+        <ul>
+          <li>Your repo fully scanned</li>
+          <li>Prioritized report with risk matrix (24–48 h)</li>
+          <li>Fix list with concrete PR suggestions</li>
+          <li>The right first step for teams</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <h3>Pro — PR bot</h3>
+        <p class="big">$19 <span class="muted">/repo/mo</span></p>
+        <ul>
+          <li>Automatic PR comments (grade + findings)</li>
+          <li>Check-run gate: critical findings block the merge</li>
+          <li>Multi-harness: Claude Code, Codex, Cursor, OpenCode</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <h3>RedTeam report</h3>
+        <p class="big">$499 <span class="muted">/quarter</span></p>
+        <ul>
+          <li>3-agent attack: attacker → defender → auditor</li>
+          <li>Prioritized risk matrix + top-5 action list</li>
+          <li>Repeatable monthly — measures progress</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:20px"><a class="btn" href="https://github.com/agentguard-dev/agentguard/issues/new" target="_blank">Request an audit — free first scan</a>
+    <a class="btn ghost" href="https://github.com/agentguard-dev/agentguard" target="_blank">Browse code &amp; evidence</a></p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <h2>Frequently asked questions</h2>
+    <div class="cards">
+      <div class="card"><h3>🧭 Does it work with my editor?</h3><p>Yes — the rules are harness-agnostic: AGENTS.md, .claude/, .cursor/, .codex/, .agents/, skills, MCP configs and hooks are all checked (Claude Code, Codex, Cursor, OpenCode).</p></div>
+      <div class="card"><h3>🔒 Is the scanner safe to run?</h3><p>It never executes code from your repo (read-only), it is deterministic (no LLM in the path) and scans itself on every PR — details in SECURITY.md.</p></div>
+      <div class="card"><h3>⚠️ What about false positives?</h3><p>Report mode is the default (single-step check). You opt into block mode and rule customization; every rule ships with regression tests that pin down past false positives.</p></div>
+      <div class="card"><h3>🤖 How is this different from native sandbox settings?</h3><p>Native settings protect <em>execution</em> at runtime. AgentGuard checks what lives in the <em>repo</em> and flows into every PR — before the merge, across all harnesses at once.</p></div>
+      <div class="card"><h3>📦 What does it actually cost?</h3><p>Free: public repos (report mode). Pro: $19/repo/mo (PR bot + gate). Audit: $499 one-time. RedTeam report: $499/quarter. No hidden fees.</p></div>
+      <div class="card"><h3>⏱️ How fast is a scan?</h3><p>Seconds: the action is dependency-free and runs on standard Node on GitHub runners; the 30-repo study completed in minutes.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="wrap">
+    <h2>Comparison: what others do — and what AgentGuard adds</h2>
+    <table>
+      <thead><tr><th>Approach</th><th>AGENTS.md &amp; skills</th><th>MCP</th><th>Hooks</th><th>PR gate + comment</th><th>RedTeam service</th></tr></thead>
+      <tbody>
+        <tr><td>Native sandbox settings</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>MCP-only scanners/actions</td><td>—</td><td>✔</td><td>—</td><td>partial</td><td>—</td></tr>
+        <tr><td>Claude-home config auditors</td><td>partial</td><td>partial</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td><strong>AgentGuard</strong></td><td><strong>✔</strong></td><td><strong>✔</strong></td><td><strong>✔</strong></td><td><strong>✔</strong></td><td><strong>✔</strong></td></tr>
+      </tbody>
+    </table>
+    <p class="muted">Plus what no table shows: a verified 30-repo real-world scan as public evidence.</p>
+  </div>
+</section>
+
+<section id="cta">
+  <div class="wrap" style="text-align:center">
+    <h2>Your agents read your repo. Do you know what's in it?</h2>
+    <a class="btn" href="https://github.com/agentguard-dev/agentguard/issues/new" target="_blank">Request a free first scan</a>
+    <a class="btn ghost" href="#install">Set up the action (60 sec)</a>
+    <a class="btn ghost" href="https://github.com/marketplace/actions/agentguard-security" target="_blank">Marketplace</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap muted">Cookie-less analytics (GoatCounter) · AgentGuard · MIT-licensed engine · <a style="color:var(--accent)" href="https://github.com/marketplace/actions/agentguard-security">GitHub Marketplace</a> · <a style="color:var(--accent)" href="https://agentguard-dev.github.io/agentguard/docs/REAL-WORLD-FINDINGS.md">Verified findings</a></div>
+</footer>
+
+<script>
+(async () => {
+  try {
+    const res = await fetch('./web/demo-findings.json');
+    const data = await res.json();
+    const v = data.vulnerable;
+    const rows = v.findings.map(f =>
+      `<tr><td><span class="badge ${f.severity==='critical'?'crit':f.severity==='high'||f.severity==='medium'?'warn':'ok'}">${f.severity}</span></td>
+       <td><code>${f.id}</code></td><td><code>${f.file}</code></td><td>${f.description}</td></tr>`
+    ).join('');
+    let realWorld = '';
+    try {
+      const rw = await (await fetch('./web/real-world-findings.json')).json();
+      if (rw.scanned > 0) {
+        const grades = Object.entries(rw.grades).map(([g,n]) => `${g}: ${n}`).join(' · ');
+        realWorld = `<h3>Real-world status: ${rw.scanned} public repos scanned — ${rw.flagged} with critical findings</h3>
+        <p class="muted">Grade distribution: ${grades} — patterns found: ${rw.sampleRules.join(', ') || '—'} (repos anonymized)</p>`;
+      }
+    } catch (e) { /* Panel optional */ }
+    document.getElementById('demo-panel').innerHTML = realWorld + `
+      <p><span class="grade ${v.grade.toLowerCase()}">${v.grade}</span>
+      <span class="muted">Grade for the attack repo — ${v.count} findings. Clean control repo: grade ${data.clean.grade}, 0 findings.</span></p>
+      <table><thead><tr><th>Grade</th><th>Rule</th><th>File</th><th>Finding</th></tr></thead><tbody>${rows}</tbody></table>`;
+  } catch (e) {
+    document.getElementById('demo-panel').innerHTML = '<p class="muted">Demo data not found — run <code>npm run demo</code> in the repo.</p>';
+  }
+})();
+</script>
+<!-- Analytics: GoatCounter (cookie-less, privacy-friendly, no personal data) -->
+<script data-goatcounter="https://agentguard.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

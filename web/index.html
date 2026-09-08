@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AgentGuard — Der Türsteher für deine Coding-Agents</title>
+<title>AgentGuard — Das Multi-Harness-Gate für Agent-Konfigurationen</title>
 <style>
   :root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--crit:#ff4d4f;--high:#ff9800;--med:#f0c674;--ok:#3fb950;--accent:#58a6ff}
   *{box-sizing:border-box}
@@ -38,6 +38,9 @@
   .price-card ul{margin:12px 0 0;padding-left:18px;color:var(--muted)}
   .price-card li{margin:4px 0}
   footer{padding:32px 0;color:var(--muted);font-size:.9rem}
+  .lang{position:fixed;top:12px;right:18px;z-index:9;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 14px;font-size:.9rem}
+  .lang a{color:var(--muted);text-decoration:none;margin:0 4px}
+  .lang a.active{color:var(--accent);font-weight:700}
 </style>
   <meta name="description" content="AgentGuard: das Multi-Harness-CI-Gate für Agent-Konfigurationen. Scannt AGENTS.md, Skills, MCP-Server &amp; Hooks auf Prompt-Injection, Secrets und Permission-Traps — kritische Findings blocken den Merge.">
   <meta property="og:title" content="AgentGuard — Das Multi-Harness-Gate für Agent-Konfigurationen">
@@ -49,6 +52,7 @@
   <meta name="twitter:description" content="Prompt-Injection in AGENTS.md, MCP &amp; Hooks? AgentGuard findet es beim PR — bevor es gemergt wird.">
 </head>
 <body>
+<div class="lang"><a href="index.html" class="active">DE</a> | <a href="index-en.html">EN</a></div>
 <header>
   <div class="wrap">
     <h1>AgentGuard 🛡️ — Das Multi-Harness-Gate für Agent-Konfigurationen</h1>

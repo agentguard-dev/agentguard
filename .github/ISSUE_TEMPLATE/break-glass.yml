@@ -1,0 +1,43 @@
+name: Break-Glass-Ausnahme (Gate-Waiver)
+description: Zeitlich begrenzte, reviewbare Ausnahme für einen Befund — läuft automatisch ab. Policy: docs/BREAK-GLASS.md
+title: "[Break-Glass] "
+labels: [break-glass]
+body:
+  - type: input
+    id: finding
+    attributes:
+      label: Betroffener Befund
+      description: Regel-ID (z. B. EXFIL-001) und Datei, für die die Ausnahme gilt
+      placeholder: "EXFIL-001 in skills/export/SKILL.md"
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Begründung
+      description: Warum ist das ein False Positive bzw. warum ist die Ausnahme nötig? (Nur verifizierte False Positives — niemals für echte Angriffs-Befunde.)
+    validations:
+      required: true
+  - type: input
+    id: expires
+    attributes:
+      label: Gültig bis (YYYY-MM-DD, max. 30 Tage)
+      description: Danach gilt das Gate automatisch wieder voll — der Break-Glass-Guardian (workflow-templates/break-glass-guard.yml) kommentiert und eskaliert bei Ablauf.
+      placeholder: "2026-10-05"
+    validations:
+      required: true
+  - type: input
+    id: reviewer
+    attributes:
+      label: Reviewer
+      description: "@mention einer zweiten Person, die die Ausnahme gegenliest"
+      placeholder: "@reviewer"
+    validations:
+      required: true
+  - type: textarea
+    id: restoration
+    attributes:
+      label: Wiederherstellung
+      description: Was muss passieren, damit das Gate wieder voll greift? (z. B. "waiver-issue aus der Workflow-Datei entfernen, Issue schließen")
+    validations:
+      required: true

@@ -68,6 +68,17 @@ jobs:
 > `.agentguard-ignore`; für sanktionierte Ausnahmen den `exclude`-Input
 > der Action nutzen.
 
+## Ausnahmen (Break-Glass)
+
+Stille Bypässe (`exclude`, `exit-on: never`) sind die häufigste Todesart
+von CI-Gates. Nutze stattdessen einen **Break-Glass-Waiver**: Waiver-Issue
+anlegen (Template „Break-Glass-Ausnahme", Label `break-glass`), als
+`waiver-issue` referenzieren und automatisch ablaufen lassen (max. 30
+Tage). Mit `strict: true` schlägt eine Suspendierung ohne Beleg fehl.
+
+- Policy: [docs/BREAK-GLASS.md](docs/BREAK-GLASS.md)
+- Guardian-Workflow (wöchentliche Ablauf-Prüfung): [workflow-templates/break-glass-guard.yml](workflow-templates/break-glass-guard.yml)
+
 Oder direkt aus dem [GitHub Marketplace](https://github.com/marketplace/actions/agentguard-security) installieren.
 
 ## Pro — der PR-Bot & RedTeam
@@ -103,6 +114,8 @@ Repo → walkFiles (exclude node_modules/.git/…) → 12 deterministische Regel
 ## Dokumentation
 
 - [Architektur-ADR-001](docs/de/ADR-001-architecture.md) · [EN](docs/ADR-001-architecture.md)
+- [Break-Glass-Governance ADR-002](docs/de/ADR-002-break-glass-governance.md) · [EN](docs/ADR-002-break-glass-governance.md)
+- [Break-Glass-Policy](docs/de/BREAK-GLASS.md) · [EN](docs/BREAK-GLASS.md)
 - [Sicherheit & Bedrohungsmodell](docs/de/SECURITY.md) · [EN](docs/SECURITY.md)
 - [Verifizierte Echtwelt-Befunde](docs/de/REAL-WORLD-FINDINGS.md) · [EN](docs/REAL-WORLD-FINDINGS.md)
 - [Pro-Server (PR-Bot)](docs/de/PRO-LAUNCH.md) · [EN](docs/PRO-LAUNCH.md)

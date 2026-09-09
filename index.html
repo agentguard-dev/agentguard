@@ -137,6 +137,14 @@ footer{border-top:1px solid rgba(255,255,255,.05);padding:30px 0;color:var(--mut
 footer a{text-decoration:underline;text-underline-offset:2px}
 .reveal{opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease}
 .reveal.in{opacity:1;transform:none}
+
+  .btn.sm{min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:10px 18px}
+  .tab{min-height:44px;display:inline-flex;align-items:center}
+  .lang-switch a{display:inline-flex;align-items:center;min-height:44px;padding:0 15px}
+  .copy-btn{min-height:44px}
+  .codebox{-webkit-overflow-scrolling:touch}
+  .scroll-x{-webkit-overflow-scrolling:touch}
+  footer a{display:inline-block;padding:6px 4px}
 @media(max-width:768px){
   .nav-links{display:none}
   .hero-grid{grid-template-columns:1fr;gap:34px}
@@ -372,6 +380,18 @@ footer a{text-decoration:underline;text-underline-offset:2px}
   </div>
 </section>
 
+<section id="trust">
+  <div class="wrap">
+    <h2>Gebaut mit Misstrauen gegen sich selbst</h2>
+    <div class="cards c3">
+      <div class="card reveal"><h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>Nicht überredbar</h3><p>Deterministische Regeln statt LLM — das Tool kann selbst nicht prompt-injiziert werden. Details im <a href="docs/SECURITY.md">Bedrohungsmodell</a>.</p></div>
+      <div class="card reveal"><h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Doppeltes Dogfooding</h3><p>AgentGuard scannt sich bei jedem eigenen PR selbst — und GitHubs Push-Protection hat beim Entwickeln einen Fake-Token in den Tests geblockt. Die Regeln wurden an diesem Tag härter: <a href="CHANGELOG.md">Changelog</a>.</p></div>
+      <div class="card reveal"><h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Öffentlich verifiziert</h3><p>Jeder Befund im 30-Repo-Scan ist byte-genau geprüft und öffentlich dokumentiert: <a href="https://agentguard-dev.github.io/agentguard/docs/REAL-WORLD-FINDINGS.md">Echtwelt-Befunde</a>.</p></div>
+    </div>
+    <p class="muted" style="margin-top:20px;font-size:.92rem"><a href="https://github.com/agentguard-dev/agentguard" data-gc-event="footer_github">⭐ Star auf GitHub</a> · <a href="https://github.com/agentguard-dev">Follow @agentguard-dev</a></p>
+  </div>
+</section>
+
 <section id="cta" class="cta-final">
   <div class="wrap">
     <h2>Deine Agenten lesen dein Repo.<br><span class="grad">Ab heute liest dein Gate mit.</span></h2>
@@ -386,13 +406,14 @@ footer a{text-decoration:underline;text-underline-offset:2px}
 <footer>
   <div class="wrap" style="display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center">
     <span>Cookie-loses Tracking (GoatCounter) · AgentGuard · MIT-lizenzierte Engine · <a href="CHANGELOG.md">Changelog</a></span>
-    <span><a href="https://github.com/marketplace/actions/agentguard-security" data-gc-event="footer_marketplace">GitHub Marketplace</a> · <a href="https://agentguard-dev.github.io/agentguard/docs/REAL-WORLD-FINDINGS.md">Verifizierte Befunde</a></span>
+    <span><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="https://github.com/marketplace/actions/agentguard-security" data-gc-event="footer_marketplace">GitHub Marketplace</a> · <a href="https://agentguard-dev.github.io/agentguard/docs/REAL-WORLD-FINDINGS.md">Verifizierte Befunde</a></span>
   </div>
 </footer>
 
 <script>
 (function(){
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mobile = window.matchMedia('(max-width: 768px)').matches;
 
   /* Terminal-Schreibmaschine, ~8s-Loop, ohne Angriffs-Phrasen */
   var term = document.getElementById('term');
@@ -422,7 +443,13 @@ footer a{text-decoration:underline;text-underline-offset:2px}
       }
       li++; ci = 0;
       if (li >= frames[fi].length){
-        li = 0; fi = (fi + 1) % frames.length;
+        li = 0;
+        if (fi === frames.length - 1 && mobile){
+          // Mobil: einmalige Wiedergabe, Ende beim Block-Moment (kein Loop).
+          term.innerHTML = term.innerHTML.replace(/<span class="cursor"><\/span>$/,'');
+          return;
+        }
+        fi = (fi + 1) % frames.length;
         if (fi === 0) term.innerHTML = '';
         setTimeout(step, fi === 0 ? 400 : 1000);
       } else setTimeout(step, 340);
@@ -432,7 +459,7 @@ footer a{text-decoration:underline;text-underline-offset:2px}
 
   /* Partikel (≤ 44, Cyan-Drift) */
   var cv = document.getElementById('particles');
-  if (!reduced && cv && cv.getContext){
+  if (!reduced && !mobile && cv && cv.getContext){
     var ctx = cv.getContext('2d'), ps = [];
     function rs(){ cv.width = innerWidth; cv.height = innerHeight; }
     rs(); addEventListener('resize', rs);

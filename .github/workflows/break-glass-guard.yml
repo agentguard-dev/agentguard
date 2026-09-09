@@ -1,0 +1,35 @@
+# Break-Glass-Guardian — DOGFOODING: bewacht unsere eigenen Waiver.
+#
+# Wöchentliche Ablauf-Prüfung für offene Break-Glass-Issues (Label
+# break-glass): abgelaufene Waiver werden kommentiert, zusätzlich
+# entsteht ein Warn-Issue. Läuft mit unserer eigenen Action im
+# Guardian-Modus — jeder Run ist zugleich ein lebender E2E-Test
+# (Policy: docs/BREAK-GLASS.md, Template: .github/ISSUE_TEMPLATE/
+# break-glass.yml).
+#
+# Manuell testen: Actions → "Break-Glass Guardian" → Run workflow.
+# Dry-Run: `path: "dry-run"` als Input setzen.
+name: Break-Glass Guardian
+
+on:
+  schedule:
+    - cron: "17 7 * * 1" # jeden Montag 07:17 UTC (bewusst keine volle Stunde)
+  workflow_dispatch:
+    inputs:
+      path:
+        description: "dry-run = nur anzeigen, keine Schreibzugriffe"
+        required: false
+        default: ""
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: agentguard-dev/agentguard@v0
+        with:
+          mode: guardian
+          path: ${{ inputs.path }}

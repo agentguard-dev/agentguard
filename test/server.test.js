@@ -22,6 +22,16 @@ test("webhook signature: valid HMAC accepted, tampered rejected", () => {
   assert.equal(verifySignature(raw, signature, undefined), false);
 });
 
+test("webhook signature with wrong length/format returns false (no crash)", () => {
+  const secret = "test-secret";
+  const raw = Buffer.from(JSON.stringify({ foo: "bar" }));
+  // Unterschiedliche Pufferlängen ließen timingSafeEqual werfen → DoS.
+  assert.equal(verifySignature(raw, "sha256=abcd", secret), false);
+  assert.equal(verifySignature(raw, "sha256=" + "0".repeat(10), secret), false);
+  assert.equal(verifySignature(raw, "sha256=" + "z".repeat(64), secret), false);
+  assert.equal(verifySignature(raw, "nonsense", secret), false);
+});
+
 test("webhook event parsing: only pull_request opened/synchronize", () => {
   const base = {
     action: "opened",

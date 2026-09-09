@@ -49,10 +49,20 @@ jobs:
   agentguard:
     runs-on: ubuntu-latest
     steps:
+      # Pflicht: checkt die PR-Dateien aus. Ohne diesen Schritt ist der
+      # Workspace leer und das Gate bestünde, ohne irgendetwas zu scannen.
+      - uses: actions/checkout@v4
       - uses: agentguard-dev/agentguard@v0
         with:
           exit-on: critical    # blockt den Merge bei kritischen Findings
 ```
+
+> **Supply-Chain-Hinweise:** `@v0` ist ein bewegliches Tag-Ref — für maximale
+> Sicherheit in kritischen Repos auf den vollen Commit-SHA pinnen
+> (`agentguard-dev/agentguard@<vollständiger-sha>`). Da PR-Inhalte nicht
+> vertrauenswürdig sind, ignoriert AgentGuard eine im PR mitgelieferte
+> `.agentguard-ignore`; für sanktionierte Ausnahmen den `exclude`-Input
+> der Action nutzen.
 
 Oder direkt aus dem [GitHub Marketplace](https://github.com/marketplace/actions/agentguard-security) installieren.
 

@@ -8,11 +8,11 @@
 // Hinweis: Die Code-Suche der GitHub-API benötigt einen Token; ohne Token
 // wird auf die Repository-Suche (höheres Rauschen) zurückgefallen.
 import fs from "node:fs";
-import { execSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { scanRepo } from "../src/scanner.js";
 import { formatMarkdown } from "../src/findings.js";
+import { downloadWithLimit, extractTarball } from "../src/tarutil.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = path.join(__dirname, "..", "outreach");
@@ -70,8 +70,10 @@ async function resolveBranch(repo, branch, token) {
 async function downloadAndExtract(repoName, branch, dir) {
   const res = await fetch(`https://codeload.github.com/${repoName}/tar.gz/${branch}`);
   if (!res.ok) throw new Error(`download failed (HTTP ${res.status})`);
-  fs.writeFileSync(path.join(dir, "repo.tar.gz"), Buffer.from(await res.arrayBuffer()));
-  execSync("tar xzf repo.tar.gz --strip-components=1", { cwd: dir, stdio: "ignore" });
+  // Untrusted Tarballs: Größenlimit + Traversal-/Symlink-Prüfung (tarutil).
+  const tar = path.join(dir, "repo.tar.gz");
+  await downloadWithLimit(res, tar);
+  extractTarball(tar, dir, { stripComponents: 1 });
 }
 
 async function main() {

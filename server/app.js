@@ -17,13 +17,14 @@ import os from "node:os";
 import path from "node:path";
 import http from "node:http";
 import crypto from "node:crypto";
-import { execFileSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { scanRepo } from "../src/scanner.js";
 import { formatMarkdown } from "../src/findings.js";
+import { downloadWithLimit, extractTarball } from "../src/tarutil.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const API = "https://api.github.com";
+const MAX_WEBHOOK_BODY = 1024 * 1024; // 1 MB — GitHub-Webhooks sind ~10–50 KB groß
 
 function loadConfig() {
   const cfgPath = path.join(os.homedir(), ".config", "agentguard", "app-config.json");
@@ -51,16 +52,21 @@ function appJwt(cfg) {
   return `${data}.${sig}`;
 }
 
-async function installationToken(cfg) {
+async function installationToken(cfg, repo) {
   const jwt = appJwt(cfg);
-  const res = await fetch(`${API}/app/installations`, { headers: { Authorization: `Bearer ${jwt}` } });
-  const installations = await res.json();
-  if (!Array.isArray(installations) || installations.length === 0)
-    throw new Error("Keine Installation gefunden (App auf Repos installieren?)");
-  const tokenRes = await fetch(`${API}/app/installations/${installations[0].id}/access_tokens`, {
+  // Installation gezielt für das Webhook-Repo auflösen — nie blind die erste
+  // Installation nehmen (Multi-Installation-Apps würden sonst das falsche
+  // Repo scannen und kommentieren).
+  const instRes = await fetch(`${API}/repos/${repo}/installation`, {
+    headers: { Authorization: `Bearer ${jwt}` },
+  });
+  if (!instRes.ok) throw new Error(`Keine Installation für ${repo} gefunden (HTTP ${instRes.status})`);
+  const inst = await instRes.json();
+  const tokenRes = await fetch(`${API}/app/installations/${inst.id}/access_tokens`, {
     method: "POST",
     headers: { Authorization: `Bearer ${jwt}` },
   });
+  if (!tokenRes.ok) throw new Error(`Access-Token fehlgeschlagen (HTTP ${tokenRes.status})`);
   const tokenData = await tokenRes.json();
   return tokenData.token;
 }
@@ -70,6 +76,9 @@ export function verifySignature(rawBody, signature, secret) {
   if (!signature || !secret) return false;
   const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
   const given = signature.replace(/^sha256=/, "");
+  // Länge/Format VOR timingSafeEqual prüfen: bei unterschiedlichen
+  // Pufferlängen wirft timingSafeEqual und reißt den Handler mit (DoS).
+  if (!/^[0-9a-f]{64}$/i.test(given)) return false;
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(given));
 }
 
@@ -89,14 +98,18 @@ export function parseWebhookEvent(payload) {
 // --- Scan + Kommentar ----------------------------------------------------------
 async function checkoutAndScan(repo, sha, tmpBase) {
   const dir = fs.mkdtempSync(path.join(tmpBase, `ag-${repo.replace("/", "__")}-`));
-  const tar = path.join(dir, "repo.tar.gz");
-  const res = await fetch(`https://codeload.github.com/${repo}/tar.gz/${sha}`);
-  if (!res.ok) throw new Error(`checkout failed (HTTP ${res.status})`);
-  fs.writeFileSync(tar, Buffer.from(await res.arrayBuffer()));
-  execFileSync("tar", ["xzf", tar, "--strip-components=1"], { cwd: dir, stdio: "ignore" });
-  const report = scanRepo(dir, { useEngine: false, customExcludes: ["node_modules", ".git"] });
-  fs.rmSync(dir, { recursive: true, force: true });
-  return report;
+  try {
+    const tar = path.join(dir, "repo.tar.gz");
+    const res = await fetch(`https://codeload.github.com/${repo}/tar.gz/${sha}`);
+    if (!res.ok) throw new Error(`checkout failed (HTTP ${res.status})`);
+    await downloadWithLimit(res, tar);
+    extractTarball(tar, dir, { stripComponents: 1 });
+    // PR-Heads sind untrusted: .agentguard-ignore aus dem PR nie honorieren.
+    const report = scanRepo(dir, { useEngine: false, honorIgnoreFile: false, customExcludes: ["node_modules", ".git"] });
+    return report;
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 }
 
 function commentBody(report, repo) {
@@ -126,20 +139,24 @@ async function postReport(token, event, report) {
       summary: formatMarkdown(report).slice(0, 6000),
     },
   };
-  await fetch(`${API}/repos/${event.repo}/check-runs`, {
+  const crRes = await fetch(`${API}/repos/${event.repo}/check-runs`, {
     method: "POST",
     headers,
     body: JSON.stringify(body),
   });
+  if (!crRes.ok) throw new Error(`Check-Run fehlgeschlagen (HTTP ${crRes.status})`);
   // PR-Kommentar (idempotent über Marker)
-  const list = await fetch(`${API}/repos/${event.repo}/issues/${event.number}/comments`, { headers }).then((r) => r.json());
+  const listRes = await fetch(`${API}/repos/${event.repo}/issues/${event.number}/comments`, { headers });
+  if (!listRes.ok) throw new Error(`Kommentar-Liste fehlgeschlagen (HTTP ${listRes.status})`);
+  const list = await listRes.json();
   const already = (Array.isArray(list) ? list : []).some((c) => c.body?.includes("## 🛡️ AgentGuard"));
   if (already) return "already-commented";
-  await fetch(`${API}/repos/${event.repo}/issues/${event.number}/comments`, {
+  const commentRes = await fetch(`${API}/repos/${event.repo}/issues/${event.number}/comments`, {
     method: "POST",
     headers,
     body: JSON.stringify({ body: commentBody(report, event.repo) }),
   });
+  if (!commentRes.ok) throw new Error(`Kommentar fehlgeschlagen (HTTP ${commentRes.status})`);
   return "posted";
 }
 
@@ -176,22 +193,29 @@ async function main() {
       return res.end(JSON.stringify({ status: "ok", service: "agentguard-pro" }));
     }
     if (req.method === "POST" && req.url === "/webhook") {
-      const chunks = [];
-      for await (const c of req) chunks.push(c);
-      const raw = Buffer.concat(chunks);
-      const sig = req.headers["x-hub-signature-256"];
-      if (!verifySignature(raw, sig, cfg.webhookSecret)) {
-        res.writeHead(401);
-        return res.end("invalid signature");
-      }
-      const event = req.headers["x-github-event"];
-      if (event !== "pull_request") {
-        res.writeHead(200);
-        return res.end("ignored");
-      }
-      let payload;
       try {
-        payload = JSON.parse(raw.toString());
+        const chunks = [];
+        let size = 0;
+        for await (const c of req) {
+          size += c.length;
+          if (size > MAX_WEBHOOK_BODY) {
+            res.writeHead(413);
+            return res.end("payload too large");
+          }
+          chunks.push(c);
+        }
+        const raw = Buffer.concat(chunks);
+        const sig = req.headers["x-hub-signature-256"];
+        if (!verifySignature(raw, sig, cfg.webhookSecret)) {
+          res.writeHead(401);
+          return res.end("invalid signature");
+        }
+        const event = req.headers["x-github-event"];
+        if (event !== "pull_request") {
+          res.writeHead(200);
+          return res.end("ignored");
+        }
+        const payload = JSON.parse(raw.toString());
         const eventData = parseWebhookEvent(payload);
         if (!eventData) {
           res.writeHead(200);
@@ -199,12 +223,19 @@ async function main() {
         }
         res.writeHead(202);
         res.end("accepted");
-        const token = await installationToken(cfg);
+        const token = await installationToken(cfg, eventData.repo);
         const report = await checkoutAndScan(eventData.repo, eventData.sha, os.tmpdir());
         const status = await postReport(token, eventData, report);
         console.log(`[${eventData.repo}#${eventData.number}] ${report.summary.grade} — ${status}`);
       } catch (e) {
+        // Der Handler darf nie als unhandled rejection den Prozess beenden.
         console.error("❌ webhook failed:", e.message);
+        if (!res.headersSent) {
+          res.writeHead(500);
+          res.end("internal error");
+        } else {
+          res.end();
+        }
       }
       return;
     }

@@ -20,25 +20,32 @@ function argValue(args, name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 
-// Lädt die DeepSeek-Konfiguration aus ~/.zshrc, damit `claude` (mit
-// ANTHROPIC_BASE_URL/anthropic-Endpoint) headless funktioniert.
-function loadClaudeEnv() {
+// Lädt zusätzliche Umgebungsvariablen für den LLM-Runner aus einer
+// Konfigurationsdatei (KEY=VALUE pro Zeile, optional mit `export `-Präfix).
+// Default: ~/.config/agentguard/redteam.env, überschreibbar via
+// AGENTGUARD_REDTEAM_ENV_FILE. Shell-Konfigurationsdateien wie ~/.zshrc
+// werden bewusst NICHT gelesen (portabel, keine privaten Shell-Dateien).
+// Bereits gesetzte Prozess-Umgebungsvariablen haben Vorrang.
+function loadRunnerEnv() {
   const env = { ...process.env };
+  const envPath =
+    process.env.AGENTGUARD_REDTEAM_ENV_FILE ||
+    path.join(process.env.HOME ?? "", ".config", "agentguard", "redteam.env");
   try {
-    const file = fs.readFileSync(path.join(process.env.HOME ?? "", ".zshrc"), "utf8");
-    const vars = {};
+    const file = fs.readFileSync(envPath, "utf8");
     for (const line of file.split("\n")) {
-      const m = /^export\s+([A-Z0-9_]+)=(?:"([^"]*)"|'([^']*)'|(\S*))/.exec(line.trim());
-      if (m && /^(ANTHROPIC|DEEPSEEK|CLAUDE_CODE)_/.test(m[1])) vars[m[1]] = m[2] ?? m[3] ?? m[4] ?? "";
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const m = /^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)=(.*)$/.exec(trimmed);
+      if (!m) continue;
+      let value = m[2].trim();
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+      if (!(m[1] in env)) env[m[1]] = value;
     }
-    const V = (k) => {
-      let v = vars[k] ?? "";
-      if (v.startsWith("$")) v = vars[v.slice(1)] ?? v;
-      return v;
-    };
-    for (const k of Object.keys(vars)) env[k] = V(k);
   } catch {
-    // .zshrc nicht lesbar — Umgebung unverändert lassen
+    // Keine Konfigurationsdatei lesbar — Umgebung unverändert lassen
   }
   return env;
 }
@@ -56,7 +63,7 @@ function runAgent(bin, prompt, label, outDir) {
     encoding: "utf8",
     timeout: 600_000,
     stdio: ["ignore", "pipe", "ignore"],
-    env: { ...loadClaudeEnv(), CLAUDE_CODE_EFFORT_LEVEL: process.env.CLAUDE_CODE_EFFORT_LEVEL || "medium" },
+    env: { ...loadRunnerEnv(), CLAUDE_CODE_EFFORT_LEVEL: process.env.CLAUDE_CODE_EFFORT_LEVEL || "medium" },
   });
   fs.writeFileSync(outFile, stdout.trim() + "\n");
   console.log(`  ✔ ${label} fertig in ${Math.round((Date.now() - started) / 1000)}s`);

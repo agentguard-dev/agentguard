@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.2.2 (heute)
+
+**Break-Glass-Governance — Ausnahmen ohne Policy-Drift**
+
+- Break-Glass-Waiver als einziger unterstützter Ausnahmepfad:
+  Issue-Template (Label `break-glass`) = immutable receipt,
+  max. 30 Tage, Pflicht-Reviewer (Policy: docs/BREAK-GLASS.md, ADR-002)
+- Action: neue Inputs `waiver-issue` (Beleg-Link in der Step-Summary)
+  und `strict` (fail-closed: `exit-on: never` ohne Beleg → Exit 2);
+  Logik nach scripts/action-gate.sh extrahiert und prozess-testbar
+- Guardian: scripts/guardian.js + workflow-templates/break-glass-guard.yml
+  (wöchentliche Ablauf-Prüfung: Kommentar + Warn-Issue)
+- Dogfooding: Guardian läuft im eigenen Repo (Schedule + workflow_dispatch),
+  Test-Waiver #13 verifiziert den E2E-Fall
+- **66 Tests** (vorher 47)
+
+
 ## v0.2.1 (heute)
 
 **Security-Härtung + Marketing-Polish**

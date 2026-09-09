@@ -202,9 +202,9 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
       </div>
       <div class="trust-bar">
         <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>MIT-Lizenz</span>
-        <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16l7-4 7 4V4l-7 4-7-4z"/></svg>47 Tests</span>
+        <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16l7-4 7 4V4l-7 4-7-4z"/></svg>66 Tests</span>
         <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 010 18"/></svg>30 Repos gescannt</span>
-        <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l2.5 2.5"/><circle cx="12" cy="12" r="9"/></svg>v0.2.1</span>
+        <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l2.5 2.5"/><circle cx="12" cy="12" r="9"/></svg>v0.2.2</span>
         <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/></svg>Kein LLM im Scan-Pfad</span>
       </div>
     </div>
@@ -215,6 +215,7 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
   </div>
 </header>
 
+<div class="wrap" style="padding:0 24px 26px"><p class="muted" style="font-size:.92rem"><strong>Neu in v0.2.2:</strong> Break-Glass-Governance — Ausnahmen mit Beleg, Reviewer und automatischem Ablauf — <a href="CHANGELOG.md">Changelog</a></p></div>
 <main>
 <section id="threats" class="alt">
   <div class="wrap">
@@ -370,6 +371,7 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
       <div class="faq-item"><button class="faq-q" aria-expanded="false">Was kostet es wirklich?<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div>Free: öffentliche Repos (Report-Modus). Pro: $19/Repo/Monat (PR-Bot + Gate). Audit: $499 einmalig. RedTeam-Report: $499/Quartal. Keine versteckten Kosten.</div></div></div>
       <div class="faq-item"><button class="faq-q" aria-expanded="false">Wie schnell läuft ein Scan?<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div>Sekunden: Die Action ist dependency-frei und läuft auf Standard-Node der GitHub-Runner; die 30-Repo-Studie lief in Minuten komplett durch.</div></div></div>
       <div class="faq-item"><button class="faq-q" aria-expanded="false">Geht das auch lokal, ohne GitHub?<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div>Ja — die CLI läuft überall, wo Node 18+ läuft: Repo klonen, <span style="font-family:var(--mono)">npm ci</span>, dann <span style="font-family:var(--mono)">node cli.js scan --path .</span> für eine sofortige Note.</div></div></div>
+      <div class="faq-item"><button class="faq-q" aria-expanded="false">Was ist mit Ausnahmen? Braucht man Bypässe?<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div>Ausnahmen sind der Ort, an dem Security-Policies real leben. AgentGuard hat dafür einen einzigen unterstützten Weg: den Break-Glass-Waiver — ein Issue als unveränderlicher Beleg, Pflicht-Reviewer, max. 30 Tage, automatischer Ablauf. Ein wöchentlicher Guardian-Workflow kommentiert abgelaufene Ausnahmen und erstellt ein Warn-Issue. <a href="https://github.com/agentguard-dev/agentguard/blob/main/docs/BREAK-GLASS.md">Break-Glass-Policy</a></div></div></div>
     </div>
   </div>
 </section>
@@ -379,12 +381,12 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
     <h2>Vergleich: Was andere machen — und was AgentGuard zusätzlich kann</h2>
     <div class="scroll-x">
     <table class="compare">
-      <thead><tr><th>Ansatz</th><th>AGENTS.md &amp; Skills</th><th>MCP</th><th>Hooks</th><th>PR-Gate + Kommentar</th><th>RedTeam-Service</th></tr></thead>
-      <tbody>
-        <tr><td>Native Sandbox-Settings</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-        <tr><td>MCP-only Scanner/Actions</td><td>—</td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td><td>—</td><td>teilweise</td><td>—</td></tr>
-        <tr><td>Claude-Home-Konfig Auditors</td><td>teilweise</td><td>teilweise</td><td>—</td><td>—</td><td>—</td></tr>
-        <tr class="ag"><td>AgentGuard</td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td></tr>
+      <thead><tr><th>Ansatz</th><th>AGENTS.md &amp; Skills</th><th>MCP</th><th>Hooks</th><th>PR-Gate + Kommentar</th><th>RedTeam-Service</th><th>Ausnahme-Governance</th></tr></thead>
+            <tbody>
+        <tr><td>Native Sandbox-Settings</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>–</td></tr>
+        <tr><td>MCP-only Scanner/Actions</td><td>—</td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td><td>—</td><td>teilweise</td><td>—</td><td>ohne Beleg</td></tr>
+        <tr><td>Claude-Home-Konfig Auditors</td><td>teilweise</td><td>teilweise</td><td>—</td><td>—</td><td>—</td><td>ohne Beleg</td></tr>
+        <tr class="ag"><td>AgentGuard</td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg></td><td><svg class="check" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>Break-Glass-Waiver mit Beleg + Ablauf (Free)</td></tr>
       </tbody>
     </table>
     </div>
@@ -395,11 +397,12 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
 <section id="trust">
   <div class="wrap">
     <h2>Gebaut mit Misstrauen gegen sich selbst</h2>
-    <div class="cards c3">
+    <div class="cards c4">
       <div class="card reveal"><h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>Nicht überredbar</h3><p>Deterministische Regeln statt LLM — das Tool kann selbst nicht prompt-injiziert werden. Details im <a href="docs/SECURITY.md">Bedrohungsmodell</a>.</p></div>
       <div class="card reveal"><h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Doppeltes Dogfooding</h3><p>AgentGuard scannt sich bei jedem eigenen PR selbst — und GitHubs Push-Protection hat beim Entwickeln einen Fake-Token in den Tests geblockt. Die Regeln wurden an diesem Tag härter: <a href="CHANGELOG.md">Changelog</a>.</p></div>
       <div class="card reveal"><h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Öffentlich verifiziert</h3><p>Jeder Befund im 30-Repo-Scan ist byte-genau geprüft und öffentlich dokumentiert: <a href="https://agentguard-dev.github.io/agentguard/docs/REAL-WORLD-FINDINGS.md">Echtwelt-Befunde</a>.</p></div>
     </div>
+          <div class="card reveal"><h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l2.5 2.5"/><circle cx="12" cy="12" r="9"/></svg>Der Wächter wacht über uns selbst</h3><p>Der Guardian läuft wöchentlich in unserem eigenen Repo — Test-Waiver #13 ist aktiv, der Ablauf-Beweis steht öffentlich: <a href="https://github.com/agentguard-dev/agentguard/blob/main/docs/BREAK-GLASS.md">Break-Glass-Policy</a>.</p></div>
     <p class="muted" style="margin-top:20px;font-size:.92rem"><a href="https://github.com/agentguard-dev/agentguard" data-gc-event="footer_github">⭐ Star auf GitHub</a> · <a href="https://github.com/agentguard-dev">Follow @agentguard-dev</a></p>
   </div>
 </section>

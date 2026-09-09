@@ -10,6 +10,8 @@ Ein CI-Gate für **AGENTS.md, Skills, MCP-Server & Hooks** — in **Claude Code,
 [![Marketplace](https://img.shields.io/badge/marketplace-free-blue)](https://github.com/marketplace/actions/agentguard-security)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
+
+**Website:** index.html (= web/index.html, DE) · web/index-en.html (EN) · CHANGELOG · impressum.html/datenschutz.html (DE), legal.html/privacy.html (EN).
 ## Warum es das gibt
 
 Coding-Agents lesen die Dateien in deinem Repo und **vertrauen ihnen**. Angreifer verstecken Anweisungen in:

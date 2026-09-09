@@ -9,9 +9,17 @@
   <meta property="og:description" content="CI gate for AGENTS.md, skills, MCP servers &amp; hooks (Claude Code, Codex, Cursor, OpenCode) — proven by a 30-repo real-world scan. Critical findings block the merge.">
   <meta property="og:url" content="https://agentguard-dev.github.io/agentguard/index-en.html">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://agentguard-dev.github.io/agentguard/logo/agentguard-og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AgentGuard — Multi-Harness Gate for Agent Configurations">
+  <meta name="twitter:image" content="https://agentguard-dev.github.io/agentguard/logo/agentguard-og.png">
   <meta name="twitter:description" content="Prompt injection in AGENTS.md, MCP &amp; hooks? AgentGuard catches it on the PR — before it merges.">
+<link rel="canonical" href="https://agentguard-dev.github.io/agentguard/index-en.html">
+  <link rel="alternate" hreflang="de" href="https://agentguard-dev.github.io/agentguard/">
+  <link rel="alternate" hreflang="en" href="https://agentguard-dev.github.io/agentguard/index-en.html">
+  <link rel="alternate" hreflang="x-default" href="https://agentguard-dev.github.io/agentguard/">
 <style>
 :root{
   --bg:#05070D; --bg2:#0A0F1A; --card:rgba(255,255,255,0.04); --border:rgba(255,255,255,0.08);
@@ -129,6 +137,14 @@ footer{border-top:1px solid rgba(255,255,255,.05);padding:30px 0;color:var(--mut
 footer a{text-decoration:underline;text-underline-offset:2px}
 .reveal{opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease}
 .reveal.in{opacity:1;transform:none}
+
+  .btn.sm{min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:10px 18px}
+  .tab{min-height:44px;display:inline-flex;align-items:center}
+  .lang-switch a{display:inline-flex;align-items:center;min-height:44px;padding:0 15px}
+  .copy-btn{min-height:44px}
+  .codebox{-webkit-overflow-scrolling:touch}
+  .scroll-x{-webkit-overflow-scrolling:touch}
+  footer a{display:inline-block;padding:6px 4px}
 @media(max-width:768px){
   .nav-links{display:none}
   .hero-grid{grid-template-columns:1fr;gap:34px}
@@ -159,7 +175,7 @@ footer a{text-decoration:underline;text-underline-offset:2px}
       <a href="#threats">Threats</a><a href="#demo">Live demo</a><a href="#setup">Setup</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
     </div>
     <div class="lang-switch"><a href="index.html">DE</a><a href="index-en.html" class="active">EN</a></div>
-    <a class="btn sm" href="#setup">Set up free</a>
+    <a class="btn sm" href="#setup" data-gc-event="nav_install">Set up free</a>
   </div>
 </nav>
 
@@ -169,8 +185,8 @@ footer a{text-decoration:underline;text-underline-offset:2px}
       <h1>Your agent reads your repo.<br><span class="grad">Your gate reads with it.</span></h1>
       <p class="sub">AgentGuard blocks invisible instructions, secrets and permission traps in every pull request — before they reach your merge.</p>
       <div class="cta-row">
-        <a class="btn" href="#setup">Set up free</a>
-        <a class="btn ghost" href="#demo">See the live demo</a>
+        <a class="btn" href="#setup" data-gc-event="hero_install">Set up free</a>
+        <a class="btn ghost" href="#demo" data-gc-event="hero_demo">See the live demo</a>
       </div>
       <div class="trust-bar">
         <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>MIT license</span>
@@ -247,8 +263,8 @@ footer a{text-decoration:underline;text-underline-offset:2px}
     <h2>Live demo</h2>
     <p class="lead">Deterministic test runs against our attack fixture repo and the clean control repo. Reproducible with <code style="font-family:var(--mono)">npm run demo</code>.</p>
     <div class="tabs" role="tablist" aria-label="Demo repositories">
-      <button class="tab red" id="tab-f" role="tab" aria-selected="true" aria-controls="panel-f">Attack repo (grade F)</button>
-      <button class="tab" id="tab-a" role="tab" aria-selected="false" aria-controls="panel-a">Clean repo (grade A)</button>
+      <button class="tab red" id="tab-f" data-gc-event="demo_tab_vuln" role="tab" aria-selected="true" aria-controls="panel-f">Attack repo (grade F)</button>
+      <button class="tab" id="tab-a" data-gc-event="demo_tab_clean" role="tab" aria-selected="false" aria-controls="panel-a">Clean repo (grade A)</button>
     </div>
     <div id="panel-f" role="tabpanel" aria-labelledby="tab-f"><p class="muted">Loading demo data…</p></div>
     <div id="panel-a" role="tabpanel" aria-labelledby="tab-a" hidden></div>
@@ -264,7 +280,7 @@ footer a{text-decoration:underline;text-underline-offset:2px}
       <div class="step reveal"><div class="n">03</div><h3 style="font-size:1rem;margin:8px 0 4px">First scan</h3><p class="muted" style="font-size:.9rem">Grade A–F, critical findings block the merge.</p></div>
     </div>
     <div class="codebox reveal">
-      <button class="copy-btn" id="copy-btn" aria-label="Copy workflow snippet">Copy</button>
+      <button class="copy-btn" id="copy-btn" data-gc-event="setup_copy" aria-label="Copy workflow snippet">Copy</button>
 <pre><code id="yaml-code"><span class="k">name</span>: AgentGuard
 <span class="k">on</span>: pull_request
 <span class="k">jobs</span>:
@@ -292,7 +308,8 @@ footer a{text-decoration:underline;text-underline-offset:2px}
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>12 rule classes, A–F grading</li>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>GitHub Action + badge</li>
         </ul>
-        <a class="btn ghost sm" href="#setup">Get started</a>
+        <li style="list-style:none;margin-top:4px"><a href="https://github.com/agentguard-dev/agentguard/issues/new?template=audit-request.yml&labels=pro-trial" data-gc-event="pricing_pro">For teams: Pro ($19/repo/mo) with PR bot + merge gate — request a Pro trial</a></li>
+        <a class="btn ghost sm" href="#setup" data-gc-event="pricing_free">Get started</a>
       </div>
       <div class="price hot reveal" style="position:relative">
         <span class="tag">Popular</span>
@@ -303,7 +320,7 @@ footer a{text-decoration:underline;text-underline-offset:2px}
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Check-run gate: criticals block the merge</li>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Multi-harness: Claude Code, Codex, Cursor, OpenCode</li>
         </ul>
-        <a class="btn sm" href="https://github.com/agentguard-dev/agentguard/issues/new" target="_blank" rel="noopener">Request access</a>
+        <a class="btn sm" href="https://github.com/agentguard-dev/agentguard/issues/new?template=audit-request.yml&labels=pro-trial" target="_blank" rel="noopener" data-gc-event="pricing_pro">Request Pro trial</a>
       </div>
       <div class="price reveal">
         <h3>Instant audit</h3>
@@ -313,7 +330,7 @@ footer a{text-decoration:underline;text-underline-offset:2px}
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Prioritized report + risk matrix (24–48 h)</li>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Fix list with concrete PR suggestions</li>
         </ul>
-        <a class="btn ghost sm" href="https://github.com/agentguard-dev/agentguard/issues/new" target="_blank" rel="noopener">Request audit</a>
+        <a class="btn ghost sm" href="https://github.com/agentguard-dev/agentguard/issues/new?template=audit-request.yml&labels=audit-request" target="_blank" rel="noopener" data-gc-event="pricing_audit">Request audit</a>
       </div>
       <div class="price reveal">
         <h3>RedTeam report</h3>
@@ -323,9 +340,10 @@ footer a{text-decoration:underline;text-underline-offset:2px}
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Risk matrix + top-5 action list</li>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Monthly, measures your progress</li>
         </ul>
-        <a class="btn ghost sm" href="https://github.com/agentguard-dev/agentguard/issues/new" target="_blank" rel="noopener">Request report</a>
+        <a class="btn ghost sm" href="https://github.com/agentguard-dev/agentguard/issues/new?template=audit-request.yml&labels=redteam-request" target="_blank" rel="noopener" data-gc-event="pricing_redteam">Request report</a>
       </div>
     </div>
+    <p class="muted" style="margin-top:18px;font-size:.9rem">Response within 24 h (weekdays) — <a href="https://github.com/agentguard-dev/agentguard/issues/new?template=audit-request.yml&labels=audit-request" data-gc-event="audit_request">first scan free</a>.</p>
   </div>
 </section>
 
@@ -362,6 +380,18 @@ footer a{text-decoration:underline;text-underline-offset:2px}
   </div>
 </section>
 
+<section id="trust">
+  <div class="wrap">
+    <h2>Built with distrust of itself</h2>
+    <div class="cards c3">
+      <div class="card reveal"><h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>Not influenceable</h3><p>Deterministic rules instead of an LLM — the tool itself cannot be prompt-injected. Details in the <a href="docs/SECURITY.md">threat model</a>.</p></div>
+      <div class="card reveal"><h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Double dogfooding</h3><p>AgentGuard scans itself on every own PR — and GitHub's push protection blocked a fake token in our tests during development. The rules got harder that day: <a href="CHANGELOG.md">changelog</a>.</p></div>
+      <div class="card reveal"><h3><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Publicly verified</h3><p>Every finding in the 30-repo scan is byte-checked and publicly documented: <a href="https://agentguard-dev.github.io/agentguard/docs/REAL-WORLD-FINDINGS.md">real-world findings</a>.</p></div>
+    </div>
+    <p class="muted" style="margin-top:20px;font-size:.92rem"><a href="https://github.com/agentguard-dev/agentguard" data-gc-event="footer_github">⭐ Star on GitHub</a> · <a href="https://github.com/agentguard-dev">Follow @agentguard-dev</a></p>
+  </div>
+</section>
+
 <section id="cta" class="cta-final">
   <div class="wrap">
     <h2>Your agents read your repo.<br><span class="grad">From today on, your gate reads with it.</span></h2>
@@ -376,13 +406,14 @@ footer a{text-decoration:underline;text-underline-offset:2px}
 <footer>
   <div class="wrap" style="display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center">
     <span>Cookie-less analytics (GoatCounter) · AgentGuard · MIT-licensed engine · <a href="CHANGELOG.md">Changelog</a></span>
-    <span><a href="https://github.com/marketplace/actions/agentguard-security">GitHub Marketplace</a> · <a href="https://agentguard-dev.github.io/agentguard/docs/REAL-WORLD-FINDINGS.md">Verified findings</a></span>
+    <span><a href="legal.html">Legal</a> · <a href="privacy.html">Privacy</a> · <a href="https://github.com/marketplace/actions/agentguard-security" data-gc-event="footer_marketplace">GitHub Marketplace</a> · <a href="https://agentguard-dev.github.io/agentguard/docs/REAL-WORLD-FINDINGS.md">Verified findings</a></span>
   </div>
 </footer>
 
 <script>
 (function(){
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mobile = window.matchMedia('(max-width: 768px)').matches;
 
   /* Terminal typewriter, ~8s loop, no attack phrases */
   var term = document.getElementById('term');
@@ -412,7 +443,13 @@ footer a{text-decoration:underline;text-underline-offset:2px}
       }
       li++; ci = 0;
       if (li >= frames[fi].length){
-        li = 0; fi = (fi + 1) % frames.length;
+        li = 0;
+        if (fi === frames.length - 1 && mobile){
+          // Mobil: einmalige Wiedergabe, Ende beim Block-Moment (kein Loop).
+          term.innerHTML = term.innerHTML.replace(/<span class="cursor"><\/span>$/,'');
+          return;
+        }
+        fi = (fi + 1) % frames.length;
         if (fi === 0) term.innerHTML = '';
         setTimeout(step, fi === 0 ? 400 : 1000);
       } else setTimeout(step, 340);
@@ -422,7 +459,7 @@ footer a{text-decoration:underline;text-underline-offset:2px}
 
   /* Particles (≤ 44, cyan drift) */
   var cv = document.getElementById('particles');
-  if (!reduced && cv && cv.getContext){
+  if (!reduced && !mobile && cv && cv.getContext){
     var ctx = cv.getContext('2d'), ps = [];
     function rs(){ cv.width = innerWidth; cv.height = innerHeight; }
     rs(); addEventListener('resize', rs);
@@ -435,6 +472,17 @@ footer a{text-decoration:underline;text-underline-offset:2px}
       requestAnimationFrame(draw);
     })();
   }
+
+  /* Conversion-Events (GoatCounter) — nur wenn der Zähler geladen ist */
+  function track(ev){
+    if (window.goatcounter && typeof window.goatcounter.count === 'function'){
+      try { window.goatcounter.count({event: ev}); } catch(e){ /* Analytics nie crashen lassen */ }
+    }
+  }
+  document.addEventListener('click', function(e){
+    var el = e.target.closest ? e.target.closest('[data-gc-event]') : null;
+    if (el) track(el.getAttribute('data-gc-event'));
+  });
 
   /* Reveal */
   var obs = new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}})},{threshold:.12});
@@ -471,7 +519,7 @@ footer a{text-decoration:underline;text-underline-offset:2px}
         i.classList.remove('open'); i.querySelector('.faq-q').setAttribute('aria-expanded','false');
         i.querySelector('.faq-a').style.maxHeight='0px';
       });
-      if(!wasOpen){ item.classList.add('open'); q.setAttribute('aria-expanded','true'); a.style.maxHeight=targetHeight+'px'; }
+      if(!wasOpen){ item.classList.add('open'); q.setAttribute('aria-expanded','true'); a.style.maxHeight=targetHeight+'px'; track('faq_open'); }
     });
   });
   var first=document.querySelector('.faq-item.open .faq-a'); if(first) first.style.maxHeight=first.scrollHeight+'px';

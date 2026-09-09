@@ -9,12 +9,12 @@
   <meta property="og:description" content="CI-Gate für AGENTS.md, Skills, MCP-Server &amp; Hooks (Claude Code, Codex, Cursor, OpenCode) — bewiesen im 30-Repo-Echtwelt-Scan. Kritische Findings blocken den Merge.">
   <meta property="og:url" content="https://agentguard-dev.github.io/agentguard/">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://agentguard-dev.github.io/agentguard/logo/agentguard-og.png">
+  <meta property="og:image" content="https://agentguard-dev.github.io/agentguard/logo/agentguard-og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AgentGuard — Multi-Harness-Gate für Agent-Konfigurationen">
-  <meta name="twitter:image" content="https://agentguard-dev.github.io/agentguard/logo/agentguard-og.png">
+  <meta name="twitter:image" content="https://agentguard-dev.github.io/agentguard/logo/agentguard-og.jpg">
   <meta name="twitter:description" content="Prompt-Injection in AGENTS.md, MCP &amp; Hooks? AgentGuard findet es beim PR — bevor es gemergt wird.">
 <link rel="canonical" href="https://agentguard-dev.github.io/agentguard/">
   <link rel="alternate" hreflang="de" href="https://agentguard-dev.github.io/agentguard/">
@@ -31,6 +31,7 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 .muted{color:var(--muted)}
+p a:not(.btn),li a:not(.btn),.muted a:not(.btn){text-decoration:underline;text-underline-offset:2px}
 a{color:var(--cyan);text-decoration:none}
 a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:6px}
 .bg-grid{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 40%,transparent 100%)}
@@ -96,7 +97,7 @@ h2{font-size:clamp(1.7rem,3vw,2.4rem);font-weight:800;letter-spacing:-.02em;marg
 .check-pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.82rem;padding:6px 12px;border-radius:8px;border:1px solid}
 .check-pill.red{color:var(--danger);border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.08);margin-right:8px}
 .check-pill.green{color:var(--ok);border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)}
-.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
 .tab{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-weight:600;font-size:.92rem}
 .tab[aria-selected="true"]{background:rgba(34,211,238,.12);color:var(--cyan);border-color:rgba(34,211,238,.4)}
 .tab.red[aria-selected="true"]{background:rgba(251,113,133,.12);color:var(--danger);border-color:rgba(251,113,133,.4)}
@@ -144,7 +145,12 @@ footer a{text-decoration:underline;text-underline-offset:2px}
   .copy-btn{min-height:44px}
   .codebox{-webkit-overflow-scrolling:touch}
   .scroll-x{-webkit-overflow-scrolling:touch}
-  footer a{display:inline-block;padding:6px 4px}
+  footer a{display:inline-flex;align-items:center;min-height:44px;padding:0 6px}
+section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:center;min-height:44px;padding:0 8px}
+@media(max-width:480px){
+  nav .btn.sm{display:none}
+  .nav-inner{gap:10px}
+}
 @media(max-width:768px){
   .nav-links{display:none}
   .hero-grid{grid-template-columns:1fr;gap:34px}
@@ -307,8 +313,8 @@ footer a{text-decoration:underline;text-underline-offset:2px}
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Öffentliche Repos, Report-Modus</li>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>12 Regelklassen, A–F-Grading</li>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>GitHub Action + Badge</li>
+                <li style="list-style:none;margin-top:4px"><a href="https://github.com/agentguard-dev/agentguard/issues/new?template=audit-request.yml&labels=pro-trial" data-gc-event="pricing_pro">Für Teams: Pro ($19/Repo/Monat) mit PR-Bot + Merge-Gate — Pro-Testlauf anfragen</a></li>
         </ul>
-        <li style="list-style:none;margin-top:4px"><a href="https://github.com/agentguard-dev/agentguard/issues/new?template=audit-request.yml&labels=pro-trial" data-gc-event="pricing_pro">Für Teams: Pro ($19/Repo/Monat) mit PR-Bot + Merge-Gate — Pro-Testlauf anfragen</a></li>
         <a class="btn ghost sm" href="#setup" data-gc-event="pricing_free">Loslegen</a>
       </div>
       <div class="price hot reveal" style="position:relative">

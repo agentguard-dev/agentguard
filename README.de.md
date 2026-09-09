@@ -4,7 +4,7 @@
 
 <p align="center"><img src="logo/agentguard-logo.png" alt="AgentGuard Logo" width="200"></p>
 
-Ein CI-Gate für **AGENTS.md, Skills, MCP-Server & Hooks** — in **Claude Code, Codex, Cursor und OpenCode** gleichermaßen. Deterministische Regeln (12 Klassen, 47 Tests), bewiesen im 30-Repo-Echtwelt-Scan. Kritische Findings blocken den Merge — oder als RedTeam-3-Agenten-Analyse.
+Ein CI-Gate für **AGENTS.md, Skills, MCP-Server & Hooks** — in **Claude Code, Codex, Cursor und OpenCode** gleichermaßen. Deterministische Regeln (12 Klassen, 59 Tests), bewiesen im 30-Repo-Echtwelt-Scan. Kritische Findings blocken den Merge — oder als RedTeam-3-Agenten-Analyse.
 
 [![AgentGuard](https://img.shields.io/badge/agentguard-passing-brightgreen)](https://github.com/agentguard-dev/agentguard)
 [![Marketplace](https://img.shields.io/badge/marketplace-free-blue)](https://github.com/marketplace/actions/agentguard-security)
@@ -39,7 +39,7 @@ Lokal:
 
 ```bash
 npm ci
-npm test                              # 12/12 Fixtures + 47 Tests
+npm test                              # 12/12 Fixtures + 59 Tests
 node cli.js scan --path .             # dieses Repo scannen
 node cli.js scan --path . --format json --exit-on critical
 ```
@@ -101,9 +101,11 @@ Repo → walkFiles (exclude node_modules/.git/…) → 12 deterministische Regel
 - `src/rules.js` — die 12 Regelklassen (pure Funktionen, keine Abhängigkeiten)
 - `src/scanner.js` — Orchestrierung + `.agentguard-ignore`-Support
 - `src/findings.js` — Grading + Formatierer
-- `server/app.js` — Pro-Server (GitHub-App-Webhook → Scan → Kommentar → Check-Run)
-- `scripts/redteam.js` — RedTeam-Pipeline (3 Agenten)
 - `test/fixtures/vulnerable/` — 12 echte Angriffs-Payloads · `test/fixtures/clean/` — Kontroll-Repo
+
+> **Open-Core:** Dieses Repo enthält nur die MIT-Engine + die freie Action.
+> Pro-Komponenten (PR-Bot-Server, RedTeam-Pipeline, Audit/Outreach-Tooling)
+> liegen in einem privaten Repo — siehe [LICENSING.md](LICENSING.md).
 
 ## Badge für dein Repo
 
@@ -118,8 +120,8 @@ Repo → walkFiles (exclude node_modules/.git/…) → 12 deterministische Regel
 - [Break-Glass-Policy](docs/de/BREAK-GLASS.md) · [EN](docs/BREAK-GLASS.md)
 - [Sicherheit & Bedrohungsmodell](docs/de/SECURITY.md) · [EN](docs/SECURITY.md)
 - [Verifizierte Echtwelt-Befunde](docs/de/REAL-WORLD-FINDINGS.md) · [EN](docs/REAL-WORLD-FINDINGS.md)
-- [Pro-Server (PR-Bot)](docs/de/PRO-LAUNCH.md) · [EN](docs/PRO-LAUNCH.md)
 - [RedTeam-Pipeline](docs/de/REDTEAM.md) · [EN](docs/REDTEAM.md)
+- [Lizenzrahmen (Open-Core)](LICENSING.md)
 
 ## Lizenz
 

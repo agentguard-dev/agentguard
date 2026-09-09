@@ -4,7 +4,7 @@
 
 <p align="center"><img src="logo/agentguard-logo.png" alt="AgentGuard Logo" width="200"></p>
 
-A CI gate for **AGENTS.md, skills, MCP servers & hooks** — across **Claude Code, Codex, Cursor and OpenCode equally**. Deterministic rules (12 classes, 47 tests), proven on a 30-repo real-world scan. Critical findings block the merge — or get the 3-agent RedTeam report.
+A CI gate for **AGENTS.md, skills, MCP servers & hooks** — across **Claude Code, Codex, Cursor and OpenCode equally**. Deterministic rules (12 classes, 59 tests), proven on a 30-repo real-world scan. Critical findings block the merge — or get the 3-agent RedTeam report.
 
 [![AgentGuard](https://img.shields.io/badge/agentguard-passing-brightgreen)](https://github.com/agentguard-dev/agentguard)
 [![Marketplace](https://img.shields.io/badge/marketplace-free-blue)](https://github.com/marketplace/actions/agentguard-security)
@@ -39,7 +39,7 @@ Locally:
 
 ```bash
 npm ci
-npm test                              # 12/12 fixtures + 47 tests
+npm test                              # 12/12 fixtures + 59 tests
 node cli.js scan --path .             # scan this repo
 node cli.js scan --path . --format json --exit-on critical
 ```
@@ -100,9 +100,11 @@ Repo → walkFiles (exclude node_modules/.git/…) → 12 deterministic rules
 - `src/rules.js` — the 12 rule classes (pure functions, no dependencies)
 - `src/scanner.js` — orchestration + `.agentguard-ignore` support
 - `src/findings.js` — grading + formatters
-- `server/app.js` — Pro server (GitHub App webhook → scan → comment → check-run)
-- `scripts/redteam.js` — 3-agent RedTeam pipeline
 - `test/fixtures/vulnerable/` — 12 real attack payloads · `test/fixtures/clean/` — control repo
+
+> **Open-core:** this repo contains the MIT engine + free Action only.
+> Pro components (PR-bot server, RedTeam pipeline, audit/outreach tooling)
+> live in a private repo — see [LICENSING.md](LICENSING.md).
 
 ## Badge for your repo
 
@@ -117,8 +119,8 @@ Repo → walkFiles (exclude node_modules/.git/…) → 12 deterministic rules
 - [Break-Glass policy](docs/BREAK-GLASS.md) · [DE](docs/de/BREAK-GLASS.md)
 - [Security & threat model](docs/SECURITY.md) · [DE](docs/de/SECURITY.md)
 - [Verified real-world findings](docs/REAL-WORLD-FINDINGS.md) · [DE](docs/de/REAL-WORLD-FINDINGS.md)
-- [Pro server (PR bot)](docs/PRO-LAUNCH.md) · [DE](docs/de/PRO-LAUNCH.md)
 - [RedTeam pipeline](docs/REDTEAM.md) · [DE](docs/de/REDTEAM.md)
+- [Licensing (open-core)](LICENSING.md)
 
 ## License
 

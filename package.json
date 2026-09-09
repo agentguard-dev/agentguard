@@ -15,7 +15,6 @@
     "test": "node --test test/*.test.js",
     "demo": "node scripts/build-demo.js",
     "self-scan": "node cli.js scan --path . --format summary --exit-on critical",
-    "redteam": "node scripts/redteam.js",
     "landing-data": "node scripts/build-landing-data.js"
   },
   "dependencies": {

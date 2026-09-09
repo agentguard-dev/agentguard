@@ -15,6 +15,7 @@ export const ALLOWED_MCP_HOSTS = [
   "mcp.ai.azure.com",
   "learn.microsoft.com",
   "context7.com",
+  "mcp.sentry.dev",
   // Offizielle GitHub-Infrastruktur-Hosts (kein Squatting, siehe MCP-001):
   "githubusercontent.com",
   "githubassets.com",
@@ -102,13 +103,24 @@ export const INSTR_OVR_001 = {
 
 // Attack-relevant zero-width chars that are NOT part of multi-codepoint emoji.
 // Attack pattern: invisible char woven into ASCII text ("curl<ZWSP> -s ...").
-// Legit pattern: ZWJ between two non-ASCII emoji codepoints (🧑🚀).
+// Legit patterns: ZWJ between two non-ASCII emoji codepoints (🧑🚀), and a
+// ZWJ at the end of an emoji sequence directly before a space ("🙋‍ Support").
 function isAttackZeroWidth(content) {
   for (let i = 0; i < content.length; i++) {
     const c = content.charCodeAt(i);
     if (c !== 0x200b && c !== 0x200c && c !== 0x200d && c !== 0x2060) continue;
     const prev = content[i - 1];
     const next = content[i + 1];
+    // Emoji-ZWJ vor Leerzeichen/Wortende: abgeschnittene ZWJ-Sequenz,
+    // kein Angriff (Real-World-FP: "🙋‍ Support" in READMEs).
+    if (
+      c === 0x200d &&
+      prev !== undefined &&
+      prev.charCodeAt(0) >= 128 &&
+      (next === undefined || next.charCodeAt(0) <= 32)
+    ) {
+      continue;
+    }
     const nearAscii =
       (prev !== undefined && prev.charCodeAt(0) < 128) ||
       (next !== undefined && next.charCodeAt(0) < 128);

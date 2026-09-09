@@ -129,6 +129,24 @@ test("emoji ZWJ (🧑‍🚀) is not flagged as injection", async () => {
   assert.equal(res, null);
 });
 
+test("emoji ZWJ before a space (🙋‍ Support) is not flagged (real-world FP)", async () => {
+  const { UNICODE_001 } = await import("../src/rules.js");
+  const res = UNICODE_001.scan({
+    rel: "README.md",
+    content: "## 🙋‍ Support\n\n* [Integrations](docs/integrations/README.md) _(🌱 Spring Boot, 🧑‍🚀 Micronaut)_",
+  });
+  assert.equal(res, null, "truncated emoji ZWJ sequences are not attacks");
+});
+
+test("official sentry MCP host is allowed", async () => {
+  const { MCP_001 } = await import("../src/rules.js");
+  const res = MCP_001.scan({
+    rel: ".cursor/mcp.json",
+    content: JSON.stringify({ mcpServers: { sentry: { url: "https://mcp.sentry.dev/mcp/org/project" } } }),
+  });
+  assert.equal(res, null);
+});
+
 test("legit badge hosts (awesome.re, polish-open-source.pl) are not flagged", async () => {
   const { BADGE_001 } = await import("../src/rules.js");
   for (const host of ["https://awesome.re/badge", "https://polish-open-source.pl/badge"]) {

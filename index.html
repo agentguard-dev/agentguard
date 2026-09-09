@@ -56,11 +56,12 @@
 <header>
   <div class="wrap">
     <h1>AgentGuard 🛡️ — Das Multi-Harness-Gate für Agent-Konfigurationen</h1>
-    <p class="sub">Ein CI-Gate für <strong>AGENTS.md, Skills, MCP-Server &amp; Hooks</strong> — in <strong>Claude Code, Codex, Cursor und OpenCode</strong> gleichermaßen. Deterministische Regeln (12 Klassen, 36 Tests), verifiziert im 30-Repo-Echtwelt-Scan. Kritische Findings blocken den Merge — oder als RedTeam-Report (3-Agenten-Angriff).</p>
+    <p class="sub">Ein CI-Gate für <strong>AGENTS.md, Skills, MCP-Server &amp; Hooks</strong> — in <strong>Claude Code, Codex, Cursor und OpenCode</strong> gleichermaßen. Deterministische Regeln (12 Klassen, 47 Tests), verifiziert im 30-Repo-Echtwelt-Scan. Kritische Findings blocken den Merge — oder als RedTeam-Report (3-Agenten-Angriff).</p>
     <a class="btn" href="#pricing">Audit anfragen — $499</a>
     <a class="btn ghost" href="#install">Kostenlos einrichten</a>
     <a class="btn ghost" href="#demo">Live-Demo ansehen</a>
   </div>
+    <p class="muted" style="margin:14px 0 0"><strong>Neu in v0.2.1:</strong> fail-closed Gates, PR-Bypass-Schutz, gehärteter Pro-Server — <a style="color:var(--accent)" href="CHANGELOG.md">Changelog</a></p>
 </header>
 
 <section>
@@ -145,7 +146,7 @@ jobs:
     <h2>Häufige Fragen</h2>
     <div class="cards">
       <div class="card"><h3>🧭 Funktioniert das mit meinem Editor?</h3><p>Ja — die Regeln sind harness-agnostisch: AGENTS.md, .claude/, .cursor/, .codex/, .agents/, Skills, MCP-Konfigs und Hooks werden alle geprüft (Claude Code, Codex, Cursor, OpenCode).</p></div>
-      <div class="card"><h3>🔒 Ist der Scanner sicher?</h3><p>Der Scanner führt keinen Code deines Repos aus (nur Lesen der Dateien), ist deterministisch (kein LLM im Pfad) und scannt sich selbst bei jedem PR — Details: SECURITY.md.</p></div>
+      <div class="card"><h3>🔒 Ist der Scanner sicher?</h3><p>Der Scanner führt keinen Code deines Repos aus (nur Lesen der Dateien), ist deterministisch (kein LLM im Pfad) und scannt sich selbst bei jedem PR — Details: SECURITY.md. Außerdem gilt: Bei Fehlkonfiguration fällt das Gate jetzt laut durch statt still zu bestehen (fail-closed), und eine im PR mitgelieferte .agentguard-ignore wird im CI ignoriert (Bypass-Schutz).</p></div>
       <div class="card"><h3>⚠️ Und Fehlalarme?</h3><p>Standard ist der Report-Modus (einstufiger Check). Block-Modus &amp; Regel-Anpassung aktivierst du selbst; jede Regel kommt mit Regression-Tests, die False Positives aus der Vergangenheit festnageln.</p></div>
       <div class="card"><h3>🤖 Was ist der Unterschied zu nativen Sandbox-Settings?</h3><p>Native Settings schützen die <em>Ausführung</em> im Sofort-Betrieb. AgentGuard prüft, was im <em>Repo</em> steht und in jeden PR einfließt — vor dem Merge, für alle Harnesses gleichzeitig.</p></div>
       <div class="card"><h3>📦 Was kostet es wirklich?</h3><p>Free: öffentliche Repos (Report-Modus). Pro: $19/Repo/Monat (PR-Bot + Gate). Audit: $499 einmalig. RedTeam-Report: $499/Quartal. Keine versteckten Kosten.</p></div>

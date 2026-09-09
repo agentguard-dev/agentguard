@@ -55,4 +55,7 @@ Bekannte Lücken:
 
 ## Verantwortungsvolle Offenlegung
 
-Findings an: `security@agentguard.example` (Platzhalter bis GitHub-Repo existiert).
+Melde ein Sicherheitsproblem über **GitHubs privates Vulnerability-Reporting**
+(Security → Vulnerability reporting). So bleibt der Bericht privat, bis das
+Problem behoben ist. Alternativ erreichst du die Betreiber über das Repository.
+Bitte Wirkung und Reproduktionsschritte beschreiben; wir antworten innerhalb von 7 Tagen.

@@ -14,7 +14,7 @@
 | Regel-Datei selbst nicht injizierbar | ✅ | Regeln sind Code, keine Prompts; kein LLM im Pfad |
 | Netzwerk | ✅ keins im Scan-Pfad | Engine-Adapter ruft nur das lokale `agentshield`-Binary |
 | Sandbox | ⚠️ bekannt | Engine-`--sandbox`-Modus ist ein optionales Feature, nicht der Default; CLI führt keinerlei Repo-Code aus (nur Lesen) |
-| Webhook (später, GitHub-App) | 🔜 ausstehend | HMAC-Verifikation ist Pflicht vor Pro-Launch |
+| Webhook (GitHub-App) | ✅ | HMAC-Verifikation, Body-Limit, Installation pro Repo — umgesetzt im privaten Pro-Repo (agentguard-pro) |
 
 ## Bedrohungsmodell (was der Scanner selbst NICHT tut)
 

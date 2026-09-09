@@ -14,7 +14,7 @@
 | Rule file itself cannot be injected | ✅ | Rules are code, not prompts; no LLM in the path |
 | Network | ✅ none in the scan path | Engine adapter only calls the local `agentshield` binary |
 | Sandbox | ⚠️ known | Engine `--sandbox` mode is optional, not the default; the CLI never executes repo code (read-only) |
-| Webhook (later, GitHub App) | 🔜 pending | HMAC verification required before any Pro launch (implemented in server/app.js) |
+| Webhook (GitHub App) | ✅ | HMAC verification, body limit, per-repo installation — implemented in the private Pro repo (agentguard-pro) |
 
 ## Threat model (what the scanner does NOT do)
 

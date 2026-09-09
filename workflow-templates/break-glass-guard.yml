@@ -1,0 +1,31 @@
+# Break-Glass-Guardian — wöchentliche Ablauf-Prüfung für Gate-Waiver.
+#
+# In euer Repo kopieren nach .github/workflows/break-glass-guard.yml,
+# ggf. Schedule anpassen. Voraussetzung: Break-Glass-Issues werden mit
+# dem Template "Break-Glass-Ausnahme (Gate-Waiver)" angelegt
+# (Label: break-glass). Policy: docs/BREAK-GLASS.md im agentguard-Repo.
+#
+# Was der Guardian tut:
+#   - Offene Issues mit Label break-glass auf "Gültig bis" prüfen
+#   - Abgelaufene Issues kommentieren (Gate gilt wieder voll)
+#   - Ein Warn-Issue mit allen abgelaufenen Ausnahmen erstellen
+#
+# Dry-Run (empfohlen beim Einrichten): path: "dry-run" setzen.
+name: Break-Glass Guardian
+
+on:
+  schedule:
+    - cron: "17 7 * * 1" # jeden Montag 07:17 UTC (bewusst keine volle Stunde)
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: agentguard-dev/agentguard@v0
+        with:
+          mode: guardian

@@ -67,6 +67,17 @@ jobs:
 > shipped inside the PR; use the Action's `exclude` input for sanctioned
 > exceptions instead.
 
+## Exceptions (Break-Glass)
+
+Silent bypasses (`exclude`, `exit-on: never`) are the most common way CI
+gates quietly die. Use a **break-glass waiver** instead: open a waiver
+issue (template "Break-Glass-Ausnahme", label `break-glass`), reference it
+as `waiver-issue`, and let it expire automatically (max. 30 days). With
+`strict: true`, a suspension without a receipt fails the job.
+
+- Policy: [docs/BREAK-GLASS.md](docs/BREAK-GLASS.md)
+- Guardian workflow (weekly expiry check): [workflow-templates/break-glass-guard.yml](workflow-templates/break-glass-guard.yml)
+
 Or install it from the [GitHub Marketplace](https://github.com/marketplace/actions/agentguard-security).
 
 ## Pro — the PR bot & RedTeam
@@ -102,6 +113,8 @@ Repo → walkFiles (exclude node_modules/.git/…) → 12 deterministic rules
 ## Docs
 
 - [Architecture ADR-001](docs/ADR-001-architecture.md) · [DE](docs/de/ADR-001-architecture.md)
+- [Break-Glass governance ADR-002](docs/ADR-002-break-glass-governance.md) · [DE](docs/de/ADR-002-break-glass-governance.md)
+- [Break-Glass policy](docs/BREAK-GLASS.md) · [DE](docs/de/BREAK-GLASS.md)
 - [Security & threat model](docs/SECURITY.md) · [DE](docs/de/SECURITY.md)
 - [Verified real-world findings](docs/REAL-WORLD-FINDINGS.md) · [DE](docs/de/REAL-WORLD-FINDINGS.md)
 - [Pro server (PR bot)](docs/PRO-LAUNCH.md) · [DE](docs/de/PRO-LAUNCH.md)

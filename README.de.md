@@ -2,7 +2,9 @@
 
 > [English](README.md) · **Deutsch**
 
-Ein CI-Gate für **AGENTS.md, Skills, MCP-Server & Hooks** — in **Claude Code, Codex, Cursor und OpenCode** gleichermaßen. Deterministische Regeln (12 Klassen, 36 Tests), bewiesen im 30-Repo-Echtwelt-Scan. Kritische Findings blocken den Merge — oder als RedTeam-3-Agenten-Analyse.
+<p align="center"><img src="logo/agentguard-logo.png" alt="AgentGuard Logo" width="200"></p>
+
+Ein CI-Gate für **AGENTS.md, Skills, MCP-Server & Hooks** — in **Claude Code, Codex, Cursor und OpenCode** gleichermaßen. Deterministische Regeln (12 Klassen, 47 Tests), bewiesen im 30-Repo-Echtwelt-Scan. Kritische Findings blocken den Merge — oder als RedTeam-3-Agenten-Analyse.
 
 [![AgentGuard](https://img.shields.io/badge/agentguard-passing-brightgreen)](https://github.com/agentguard-dev/agentguard)
 [![Marketplace](https://img.shields.io/badge/marketplace-free-blue)](https://github.com/marketplace/actions/agentguard-security)
@@ -35,7 +37,7 @@ Lokal:
 
 ```bash
 npm ci
-npm test                              # 12/12 Fixtures + 36 Tests
+npm test                              # 12/12 Fixtures + 47 Tests
 node cli.js scan --path .             # dieses Repo scannen
 node cli.js scan --path . --format json --exit-on critical
 ```

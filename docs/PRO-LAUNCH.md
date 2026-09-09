@@ -12,7 +12,7 @@
   HMAC verification → tarball checkout → scan → check run → PR comment
 - Idempotency: one AgentGuard comment per PR (marker-based)
 - Demo mode without GitHub: `node server/app.js --demo` → `server/demo-output/`
-- 4 unit tests, all green (36/36 total)
+- 4 unit tests, all green (47/47 total)
 
 ## Go live in 15 minutes (4 steps)
 

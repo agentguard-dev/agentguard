@@ -52,6 +52,7 @@ obfuscated or novel attacks can pass. Known gaps:
 
 ## Reporting
 
-To report a security issue, open a private ticket on this repository's issues
-or contact the maintainer via the repo. Please describe the impact and how to
-reproduce; we respond within 7 days.
+To report a security issue, use **GitHub's private vulnerability reporting**
+(Security → Vulnerability reporting). It keeps the report private until the
+issue is fixed. Alternatively, reach the maintainers via the repository.
+Please describe the impact and how to reproduce; we respond within 7 days.

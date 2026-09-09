@@ -29,6 +29,8 @@ Ausnahme:
   (reproduziert und dokumentiert)
 - Eine zeitlich begrenzte Ausnahme während einer Migration oder
   eines Rollouts
+- Ein **Test-Waiver** zur End-to-End-Verifikation des Guardians —
+  muss im Titel als „Test-Waiver" erkennbar sein
 
 ## Wann ein Waiver nie legitim ist
 

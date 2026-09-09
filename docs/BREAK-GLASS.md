@@ -25,6 +25,8 @@ off — or even that it was. Break-glass makes every exception:
 
 - A rule produces a **verified false positive** (reproduced, documented)
 - A temporary, bounded exception during a migration or rollout
+- A **test waiver** to verify the Guardian end-to-end — must be titled
+  „Test-Waiver" so it is recognizable as such
 
 ## When a waiver is never legitimate
 

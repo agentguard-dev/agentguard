@@ -1,0 +1,63 @@
+name: Audit / Report anfragen
+description: Repo-Scan, Pro-Testlauf oder RedTeam-Report anfragen — Antwort innerhalb von 24 h (werktags), erster Scan kostenlos.
+title: "[Anfrage] "
+labels: [audit-request]
+body:
+  - type: input
+    id: repo
+    attributes:
+      label: Repo-URL
+      placeholder: https://github.com/owner/repo
+      description: Welches Repository soll gescannt werden?
+    validations:
+      required: true
+  - type: checkboxes
+    id: harnesses
+    attributes:
+      label: Welche Agent-Harnesses nutzt ihr?
+      options:
+        - label: Claude Code
+        - label: Codex
+        - label: Cursor
+        - label: OpenCode
+        - label: Anderes / mehrere
+  - type: dropdown
+    id: team
+    attributes:
+      label: Teamgröße
+      options:
+        - "1"
+        - "2–5"
+        - "6–20"
+        - "20+"
+    validations:
+      required: true
+  - type: dropdown
+    id: interest
+    attributes:
+      label: Interesse
+      description: Was möchtest du am liebsten?
+      options:
+        - "Sofort-Audit ($499, einmalig)"
+        - "Pro-Testlauf ($19/Repo/Monat)"
+        - "RedTeam-Report ($499/Quartal)"
+        - "Erst mal den kostenlosen Scan"
+    validations:
+      required: true
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Dringlichkeit
+      options:
+        - "Innerhalb einer Woche"
+        - "In 48 h"
+        - "Sofort"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Beschreibung
+      placeholder: Was ist der Kontext? Besondere Bedenken, Compliance-Anforderungen, Branche …
+    validations:
+      required: false

@@ -12,11 +12,11 @@
   HMAC-Verifikation → Tarball-Checkout → Scan → Check-Run → PR-Kommentar
 - Idempotenz: Ein AgentGuard-Kommentar pro PR (Marker-basiert)
 - Demo-Modus ohne GitHub: `node server/app.js --demo` → `server/demo-output/`
-- 4 Unit-Tests, alle grün (36/36 gesamt)
+- 4 Unit-Tests, alle grün (47/47 gesamt)
 
 ## In 15 Minuten live (deine 4 Schritte)
 
-**Schritt 1 — App registrieren:** Öffne `docs/install-app.html` in deinem Browser
+**Schritt 1 — App registrieren:** Öffne `docs/de/install-app.html` in deinem Browser
 und klicke „GitHub App erstellen". GitHub zeigt dir danach:
 
 - **App-ID** (z. B. `123456`)

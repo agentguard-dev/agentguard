@@ -15,7 +15,7 @@ testable against a reproducible attack fixture, GitHub Actions compatible.
 
 ### 1. Node.js ≥ 18, standard library only in the scan core
 No build step, no transpilers. `node --test` as the test runner (currently
-36 tests). Rationale: GitHub runners have Node; zero build = zero install
+47 tests). Rationale: GitHub runners have Node; zero build = zero install
 friction.
 
 ### 2. Own deterministic rule engine as the primary layer

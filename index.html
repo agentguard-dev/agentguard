@@ -28,14 +28,15 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+body{position:relative;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 .muted{color:var(--muted)}
 p a:not(.btn),li a:not(.btn),.muted a:not(.btn){text-decoration:underline;text-underline-offset:2px}
 a{color:var(--cyan);text-decoration:none}
 a:focus-visible,button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:6px}
-.bg-grid{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 40%,transparent 100%)}
-.glow{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;opacity:.5}
+.bg-deco{position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none}
+.bg-grid{position:absolute;inset:0;width:100%;z-index:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 40%,transparent 100%)}
+.glow{position:absolute;border-radius:50%;filter:blur(120px);z-index:0;opacity:.5}
 .glow-1{width:520px;height:520px;background:rgba(34,211,238,.16);top:-160px;left:-140px}
 .glow-2{width:620px;height:620px;background:rgba(167,139,250,.14);bottom:-220px;right:-160px}
 #particles{position:fixed;inset:0;z-index:0;pointer-events:none}
@@ -128,6 +129,7 @@ th{background:rgba(255,255,255,.04);font-weight:700;color:var(--text)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;color:var(--muted);font-size:.94rem}
 .faq-a div{padding:0 20px 18px}
 .scroll-x{overflow-x:auto}
+.scroll-x table{min-width:620px}
 .compare th:first-child,.compare td:first-child{position:sticky;left:0;background:#0D1420;z-index:2}
 .compare .ag td:first-child{background:rgba(34,211,238,.10);font-weight:700;color:var(--cyan)}
 .compare .ag{background:rgba(34,211,238,.05)}
@@ -154,7 +156,8 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
 @media(max-width:768px){
   .nav-links{display:none}
   .hero-grid{grid-template-columns:1fr;gap:34px}
-  .cards.c2,.cards.c3,.cards.c4,.stats,.steps{grid-template-columns:1fr 1fr}
+  .cards.c2,.cards.c4,.stats,.steps{grid-template-columns:1fr 1fr}
+  .cards.c3{grid-template-columns:1fr}
   .cards.c4{grid-template-columns:1fr}
   header.hero{padding:48px 0}
 }
@@ -166,9 +169,11 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
 </style>
 </head>
 <body>
-<div class="bg-grid" aria-hidden="true"></div>
-<div class="glow glow-1" aria-hidden="true"></div>
-<div class="glow glow-2" aria-hidden="true"></div>
+<div class="bg-deco" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+</div>
 <canvas id="particles" aria-hidden="true"></canvas>
 
 <nav>

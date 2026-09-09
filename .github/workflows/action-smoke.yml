@@ -15,3 +15,6 @@ jobs:
       - uses: agentguard-dev/agentguard@v0
         with:
           exit-on: critical
+          # v0.2.1: repo-eigene .agentguard-ignore wird in CI absichtlich
+          # ignoriert (Bypass-Schutz) — Ausnahmen kommen über den exclude-Input.
+          exclude: "test docs"   # eigene Attack-Fixtures + Payload-Doku

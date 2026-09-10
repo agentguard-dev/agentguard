@@ -15,7 +15,20 @@
 | [joske/yserver](https://github.com/joske/yserver) | E | ZWSP mitten im Satz einer Agenten-Spec (`arm/␣spin`) in `docs/superpowers/specs/…md` | ⚠️ verdächtig — exakt das Injection-Muster (oder Abschreib-Artefakt) |
 | [GoogleContainerTools/config-sync](https://github.com/GoogleContainerTools/config-sync) | E | ZWSP am Zeilenende in `examples/post-sync/README.md` | Artefakt-artig, Regel korrekt |
 | [InvoiceShelf/InvoiceShelf](https://github.com/InvoiceShelf/InvoiceShelf) | E | ZWSP in `lang/ru.json` (Übersetzungsdatei) | Artefakt-artig, Regel korrekt |
-| [nextcloud/android](https://github.com/nextcloud/android) | E | Committeter Google-API-Key `AIzaSy…` in `values/setup.xml` | Committed credential; bei Android-Client-Keys branchenüblich, Risiko kontextabhängig |
+| [nextcloud/android](https://github.com/nextcloud/android) | E | Committeter Google-API-Key `AIzaSy…` in `values/setup.xml` | ✅ **resolved (11.09.2026)** — Maintainer bestätigt: Key ist package-restricted |
+
+## Outreach-Status
+
+Jeder Befund wurde am 09.09.2026 an seine Maintainer gemeldet (ohne
+Bug-Bounty-Programme, ohne „Hack"-Sprache, Report als Anhang). Stand:
+
+| Repo | Kontaktiert | Antwort |
+|---|---|---|
+| WecomTeam/wecom-cli | ✅ 09.09.2026 | — |
+| joske/yserver | ✅ 09.09.2026 | — |
+| GoogleContainerTools/config-sync | ✅ 09.09.2026 | — |
+| InvoiceShelf/InvoiceShelf | ✅ 09.09.2026 | — |
+| nextcloud/android | ✅ 09.09.2026 | ✅ 11.09.2026: Key package-restricted → Befund resolved |
 
 ## Methodik (warum man dem Material trauen kann)
 

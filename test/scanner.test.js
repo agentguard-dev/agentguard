@@ -196,6 +196,28 @@ test("real slack token format is a secret", async () => {
   assert.equal(res.severity, "critical");
 });
 
+test("AWS documentation example key is not a secret", async () => {
+  const { SECRET_001 } = await import("../src/rules.js");
+  // Bewusst zusammengesetzt (wie beim Slack-Token): das Literal würde ältere
+  // Scanner-Versionen triggern. Zur Laufzeit ist es exakt der Beispiel-Key aus
+  // den AWS-Docs (Form AKIA…EXAMPLE).
+  const AWS_DOC_EXAMPLE = "AKIA" + "IOSFODNN7EXAMPLE";
+  const res = SECRET_001.scan({
+    rel: "AGENTS.md",
+    content:
+      'aws_access_key_id="' + AWS_DOC_EXAMPLE + '", aws_secret_access_key="test", region="us-east-1"\n',
+  });
+  assert.equal(res, null, "AWS docs example credentials document setup, they are not leaks");
+});
+
+test("non-example AWS key shape is still flagged as secret", async () => {
+  const { SECRET_001 } = await import("../src/rules.js");
+  const key = "AKIA" + "3J7Q2PLZKQ9WRTUV";
+  const res = SECRET_001.scan({ rel: "AGENTS.md", content: "aws_access_key_id=" + key + "\n" });
+  assert.ok(res, "a non-example AWS key shape must stay critical");
+  assert.equal(res.severity, "critical");
+});
+
 test("everyday prose with curl is not instruction override", async () => {
   const { INSTR_OVR_001 } = await import("../src/rules.js");
   const res = INSTR_OVR_001.scan({

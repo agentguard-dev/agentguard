@@ -219,12 +219,31 @@ export const HOOK_001 = {
 };
 
 // Rule 5 — API keys/secrets committed (outside *.example templates).
+// AWS-Dokumentations-Beispiele (Access-Key-IDs auf "…EXAMPLE") sind keine
+// committeten Credentials: Agent-Configs dokumentieren häufig Cloud-Setup
+// (z. B. ein AGENTS.md für einen AWS-Emulator).
+//
+// Bewusst KEINE Liste konkreter Beispiel-Keys: solche Literale sehen selbst wie
+// ein Secret aus und triggern ältere Scanner-Versionen (im CI-Smoke-Test passiert:
+// die veröffentlichte Auto-Action flaggte diese Datei). Stattdessen strukturell:
+// echte Access-Key-IDs enden praktisch nie auf "EXAMPLE" (36^7 ≈ 7,8e10 Fälle).
+const AWS_DOC_EXAMPLE_SUFFIX = "EXAMPLE";
+
+function stripAwsDocExamples(content) {
+  return content.replace(/AKIA[0-9A-Z]{16}/g, (m) =>
+    m.endsWith(AWS_DOC_EXAMPLE_SUFFIX) ? "" : m
+  );
+}
+
 export const SECRET_001 = {
   id: "SECRET-001",
   severity: "critical",
   description: "High-entropy credential pattern committed to the repository.",
   scan({ rel, content }) {
     if (/(\.example|\.sample|\.template|\.bak|\.orig|\.fixture)$/i.test(rel)) return null;
+    // Dokumentations-Beispiele neutralisieren, BEVOR gematcht wird. Das
+    // Entfernen berührt keine Zeilenumbrüche, Zeilennummern bleiben korrekt.
+    const hay = stripAwsDocExamples(content);
     const patterns = {
       "sk-…": /sk-[A-Za-z0-9]{20,}/g,
       "ghp_…": /ghp_[A-Za-z0-9]{25,}/g,
@@ -241,11 +260,11 @@ export const SECRET_001 = {
     let firstLine = null;
     for (const [kind, re] of Object.entries(patterns)) {
       re.lastIndex = 0;
-      if (re.test(content)) {
+      if (re.test(hay)) {
         detected.push(kind);
         if (firstLine === null) {
-          const idx = content.search(re);
-          firstLine = idx >= 0 ? lineOf(content, idx) : null;
+          const idx = hay.search(re);
+          firstLine = idx >= 0 ? lineOf(hay, idx) : null;
         }
       }
     }

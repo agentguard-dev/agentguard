@@ -1,5 +1,29 @@
 # Changelog
 
+## Unreleased
+
+**Gate-Integrität — vier belegte Bypässe geschlossen**
+
+- **CI-Selbst-Scan:** `--no-ignore` + Ausnahmen als `--exclude` im Workflow
+  (Basis-Branch, review-pflichtig) statt in der PR-editierbaren
+  `.agentguard-ignore`. Vorher meldete der eigene Dogfood-Scan **grade A /
+  0 Findings**, während derselbe Befehl mit `--no-ignore` **grade F /
+  14 kritische Findings** ergab — genau der Bypass, gegen den die Action ihre
+  Kunden härtet.
+- **HOOK-001** erkennt jetzt die echte Hook-Verdrahtung in
+  `.claude/settings.json`, `.claude/settings.local.json`,
+  `.cursor/settings.json` und `.codex/settings.json`. Vorher wurde nur ein
+  `hooks/`-Verzeichnis geprüft: ein Repo, dessen einziger Angriff ein live
+  `curl | bash`-Hook in der settings.json war, kam auf **grade A, Exit 0**.
+- **CLI fail-closed:** unbekannte Optionen und fehlende Optionswerte brechen
+  mit Exit 2 ab. Ein vertippter Flag-Name (`--exit-onn`) deaktivierte das Gate
+  bisher still; `--exclude` ohne Wert endete in einem ungefangenen TypeError.
+- **Engine-Layer respektiert Ausschlüsse:** `scanWithEngine` erhält keine
+  Ausschlussmuster (agentshield kennt kein `--exclude`), die Funde werden
+  daher mit denselben Matchern gefiltert. Vorher umging die Engine jeden
+  Ausschluss — auch die offizielle Break-Glass-Ausnahme.
+- **76 Tests** (vorher 63)
+
 ## v0.2.2 (heute)
 
 **Break-Glass-Governance — Ausnahmen ohne Policy-Drift**

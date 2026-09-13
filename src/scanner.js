@@ -23,6 +23,23 @@ export function loadIgnoreFile(rootDir) {
     .map(globToRegExp);
 }
 
+// Normalisiert einen Fundort auf einen Pfad relativ zur Scan-Wurzel. Die
+// Engine liefert je nach Aufruf relative oder absolute Pfade.
+export function toRepoRelative(rootDir, file) {
+  if (!file) return "";
+  const abs = path.isAbsolute(file) ? file : path.resolve(rootDir, file);
+  return path.relative(rootDir, abs);
+}
+
+// Baut Pfad-Matcher aus ignore/exclude-Mustern (RegExp bleibt unverändert).
+export function buildExcludeMatchers(patterns) {
+  return patterns.map((p) => (p instanceof RegExp ? p : globToRegExp(p)));
+}
+
+export function isExcluded(matchers, rel) {
+  return matchers.some((re) => re.test(rel));
+}
+
 export function scanRepo(
   rootDir,
   { useEngine = true, excludeDirs = [], customExcludes = [], honorIgnoreFile = true } = {}
@@ -30,6 +47,7 @@ export function scanRepo(
   rootDir = path.resolve(rootDir);
   const findings = [];
   const ignore = [...(honorIgnoreFile ? loadIgnoreFile(rootDir) : []), ...customExcludes];
+  const excludeMatchers = buildExcludeMatchers(ignore);
 
   for (const file of walkFiles(rootDir, { excludeDirs, customExcludes: ignore })) {
     const content = readText(file.abs);
@@ -49,7 +67,13 @@ export function scanRepo(
   }
 
   if (useEngine && isEngineAvailable()) {
-    findings.push(...scanWithEngine(rootDir));
+    // agentshield kennt kein --exclude/--ignore. Ohne diesen Filter umging die
+    // Engine-Layer jeden Ausschluss — auch die offizielle Break-Glass-Ausnahme.
+    findings.push(
+      ...scanWithEngine(rootDir).filter(
+        (f) => !isExcluded(excludeMatchers, toRepoRelative(rootDir, f.file))
+      )
+    );
   }
 
   findings.sort((a, b) => {

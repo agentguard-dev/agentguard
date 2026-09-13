@@ -11,7 +11,7 @@ A CI gate for **AGENTS.md, skills, MCP servers & hooks** — across **Claude Cod
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 
-**Website:** index.html (= web/index.html, DE) · web/index-en.html (EN) · CHANGELOG · impressum.html/datenschutz.html (DE), legal.html/privacy.html (EN).
+**Website:** index.html (DE) · index-en.html (EN) · CHANGELOG · impressum.html/datenschutz.html (DE), legal.html/privacy.html (EN).
 ## Why this exists
 
 Coding agents read your repo files and **trust them**. Attackers hide instructions in:

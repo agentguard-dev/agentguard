@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AgentGuard — Dein Agent liest dein Repo. Dein Gate liest mit.</title>
-  <meta name="description" content="AgentGuard: das Multi-Harness-CI-Gate für Agent-Konfigurationen. Scannt AGENTS.md, Skills, MCP-Server &amp; Hooks auf Prompt-Injection, Secrets und Permission-Traps — kritische Findings blocken den Merge.">
+  <meta name="description" content="CI-Gate für Agent-Konfigurationen: prüft AGENTS.md, Skills, MCP-Server und Hooks auf Prompt-Injection und Secrets. Kritische Findings blocken den Merge.">
+  <meta name="theme-color" content="#05070D">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <meta property="og:title" content="AgentGuard — Das Multi-Harness-Gate für Agent-Konfigurationen">
   <meta property="og:description" content="CI-Gate für AGENTS.md, Skills, MCP-Server &amp; Hooks (Claude Code, Codex, Cursor, OpenCode) — bewiesen im 30-Repo-Echtwelt-Scan. Kritische Findings blocken den Merge.">
   <meta property="og:url" content="https://agentguard-dev.github.io/agentguard/">
@@ -27,7 +29,12 @@
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+/* Skip-Link: SC 2.4.1 (Bypass Blocks) — sonst führt jeder Fokus-Pfad durch die
+   komplette Navigation. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip-link{position:absolute;left:-9999px;top:0;z-index:100;background:var(--cyan);color:#031018;font-weight:800;padding:12px 18px;border-radius:0 0 10px 0}
+.skip-link:focus{left:0}
 body{position:relative;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 .muted{color:var(--muted)}
@@ -100,6 +107,9 @@ h2{font-size:clamp(1.7rem,3vw,2.4rem);font-weight:800;letter-spacing:-.02em;marg
 .check-pill.red{color:var(--danger);border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.08);margin-right:8px}
 .check-pill.green{color:var(--ok);border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)}
 .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+/* CLS: die Panels starten als <p> und werden per fetch() durch Tabellen
+   ersetzt. Reservierte Höhe verhindert den Layout-Sprung. */
+#panel-f,#panel-a{min-height:190px}
 .tab{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-weight:600;font-size:.92rem}
 .tab[aria-selected="true"]{background:rgba(34,211,238,.12);color:var(--cyan);border-color:rgba(34,211,238,.4)}
 .tab.red[aria-selected="true"]{background:rgba(251,113,133,.12);color:var(--danger);border-color:rgba(251,113,133,.4)}
@@ -127,7 +137,10 @@ th{background:rgba(255,255,255,.04);font-weight:700;color:var(--text)}
 .faq-q{width:100%;background:transparent;border:none;color:var(--text);text-align:left;padding:17px 20px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .faq-q svg{transition:transform .25s;stroke:var(--cyan);flex:none}
 .faq-item.open .faq-q svg{transform:rotate(180deg)}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;color:var(--muted);font-size:.94rem}
+.faq-a{max-height:0;overflow:hidden;visibility:hidden;transition:max-height .3s ease,visibility .3s;color:var(--muted);font-size:.94rem}
+/* SC 2.4.7/4.1.3: zugeklappte Antworten dürfen keinen fokussierbaren Link
+   versteckt halten (max-height:0 allein lässt ihn in der Tab-Reihenfolge). */
+.faq-item.open .faq-a{visibility:visible}
 .faq-a div{padding:0 20px 18px}
 .scroll-x{overflow-x:auto}
 .scroll-x table{min-width:620px}
@@ -164,12 +177,33 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
   .reveal{opacity:1;transform:none}
   .cursor{animation:none}
 }
 </style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AgentGuard",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "GitHub Actions, Node.js 18+ (macOS, Linux, Windows)",
+  "description": "CI-Gate, das Agent-Konfigurationen (AGENTS.md, Skills, MCP-Server, Hooks) bei jedem Pull-Request auf Prompt-Injection, Secrets und Permission-Traps prüft. Kritische Findings blocken den Merge.",
+  "url": "https://agentguard-dev.github.io/agentguard/",
+  "license": "https://opensource.org/licenses/MIT",
+  "offers": [
+    { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD", "description": "Öffentliche Repos, Report-Modus" },
+    { "@type": "Offer", "name": "Pro", "price": "19", "priceCurrency": "USD", "description": "Pro Repo und Monat: PR-Bot, Gate und Regel-Editor" },
+    { "@type": "Offer", "name": "Sofort-Audit", "price": "499", "priceCurrency": "USD", "description": "Einmaliger Repo-Scan mit priorisiertem Report" },
+    { "@type": "Offer", "name": "RedTeam-Report", "price": "499", "priceCurrency": "USD", "description": "3-Agenten-Angriff pro Quartal" }
+  ]
+}
+</script>
 </head>
 <body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
 <div class="bg-deco" aria-hidden="true">
   <div class="bg-grid"></div>
   <div class="glow glow-1"></div>
@@ -186,8 +220,8 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
     <div class="nav-links">
       <a href="#threats">Bedrohungen</a><a href="#demo">Live-Demo</a><a href="#setup">Einrichten</a><a href="#pricing">Preise</a><a href="#faq">FAQ</a>
     </div>
-    <div class="lang-switch"><a href="index.html" class="active">DE</a><a href="index-en.html">EN</a></div>
-    <a class="btn sm" href="#setup" data-gc-event="nav_install">Kostenlos einrichten</a>
+    <div class="lang-switch"><a href="index.html" class="active" aria-current="page">DE</a><a href="index-en.html" hreflang="en" lang="en">EN</a></div>
+    <a class="btn sm" href="https://github.com/marketplace/actions/agentguard-security" target="_blank" rel="noopener" data-gc-event="nav_install">Kostenlos einrichten</a>
   </div>
 </nav>
 
@@ -197,12 +231,12 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
       <h1>Dein Agent liest dein Repo.<br><span class="grad">Dein Gate liest mit.</span></h1>
       <p class="sub">AgentGuard blockt unsichtbare Anweisungen, Secrets und Permission-Traps in jedem Pull-Request — bevor sie deinen Merge erreichen.</p>
       <div class="cta-row">
-        <a class="btn" href="#setup" data-gc-event="hero_install">Kostenlos einrichten</a>
+        <a class="btn" href="https://github.com/marketplace/actions/agentguard-security" target="_blank" rel="noopener" data-gc-event="hero_install">Kostenlos einrichten</a>
         <a class="btn ghost" href="#demo" data-gc-event="hero_demo">Live-Demo ansehen</a>
       </div>
       <div class="trust-bar">
         <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>MIT-Lizenz</span>
-        <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16l7-4 7 4V4l-7 4-7-4z"/></svg>85 Tests</span>
+        <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16l7-4 7 4V4l-7 4-7-4z"/></svg>76 Tests</span>
         <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 010 18"/></svg>30 Repos gescannt</span>
         <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l2.5 2.5"/><circle cx="12" cy="12" r="9"/></svg>v0.2.2</span>
         <span><svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/></svg>Kein LLM im Scan-Pfad</span>
@@ -215,8 +249,8 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
   </div>
 </header>
 
+<main id="main">
 <div class="wrap" style="padding:0 24px 26px"><p class="muted" style="font-size:.92rem"><strong>Neu in v0.2.2:</strong> Break-Glass-Governance — Ausnahmen mit Beleg, Reviewer und automatischem Ablauf — <a href="CHANGELOG.md">Changelog</a></p></div>
-<main>
 <section id="threats" class="alt">
   <div class="wrap">
     <h2>Was versteckt sich in deinem Repo?</h2>
@@ -293,7 +327,9 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
       <div class="step reveal"><div class="n">03</div><h3 style="font-size:1rem;margin:8px 0 4px">Erster Scan</h3><p class="muted" style="font-size:.9rem">Note A–F, kritische Findings blocken den Merge.</p></div>
     </div>
     <div class="codebox reveal">
-      <button class="copy-btn" id="copy-btn" data-gc-event="setup_copy" aria-label="Workflow-Snippet kopieren">Kopieren</button>
+      <button class="copy-btn" id="copy-btn" data-gc-event="setup_copy" aria-describedby="copy-hint">Kopieren</button>
+      <span id="copy-hint" class="sr-only">Workflow-Snippet in die Zwischenablage kopieren</span>
+      <span id="copy-status" class="sr-only" role="status"></span>
 <pre><code id="yaml-code"><span class="k">name</span>: AgentGuard
 <span class="k">on</span>: pull_request
 <span class="k">jobs</span>:
@@ -305,6 +341,7 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
         <span class="k">with</span>:
           <span class="k">exit-on</span>: critical</code></pre>
     </div>
+    <p style="margin-top:18px"><a class="btn sm" href="https://github.com/marketplace/actions/agentguard-security" target="_blank" rel="noopener" data-gc-event="setup_marketplace">Auf GitHub Marketplace installieren</a></p>
     <p class="muted" style="margin-top:16px;font-size:.92rem">Starte im Report-Modus; schalte auf Block-Modus, wenn dein Team bereit ist.</p>
   </div>
 </section>
@@ -351,7 +388,7 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
         <ul>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>3-Agenten-Angriff: Angreifer → Verteidiger → Auditor</li>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Risiko-Matrix + Top-5-Handlungsliste</li>
-          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Monatlich — misst deinen Fortschritt</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Quartalsweise Auswertung — misst deinen Fortschritt</li>
         </ul>
         <a class="btn ghost sm" href="https://github.com/agentguard-dev/agentguard/issues/new?template=audit-request.yml&labels=redteam-request" target="_blank" rel="noopener" data-gc-event="pricing_redteam">Report anfragen</a>
       </div>
@@ -542,9 +579,10 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
   /* Kopieren */
   var copyBtn=document.getElementById('copy-btn');
   var yamlText='name: AgentGuard\non: pull_request\njobs:\n  agentguard:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: agentguard-dev/agentguard@v0\n        with:\n          exit-on: critical';
+  var copyStatus=document.getElementById('copy-status');
   copyBtn.addEventListener('click',function(){
-    var done=function(){copyBtn.textContent='Kopiert ✓';setTimeout(function(){copyBtn.textContent='Kopieren';},1800)};
-    if(navigator.clipboard){navigator.clipboard.writeText(yamlText).then(done).catch(function(){copyBtn.textContent='Kopieren fehlgeschlagen';});}
+    var done=function(){copyBtn.textContent='Kopiert ✓';copyStatus.textContent='Workflow-Snippet kopiert';setTimeout(function(){copyBtn.textContent='Kopieren';copyStatus.textContent='';},1800)};
+    if(navigator.clipboard){navigator.clipboard.writeText(yamlText).then(done).catch(function(){copyBtn.textContent='Kopieren fehlgeschlagen';copyStatus.textContent='Kopieren fehlgeschlagen';});}
     else done();
   });
 })();

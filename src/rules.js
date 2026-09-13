@@ -201,13 +201,20 @@ export const MCP_001 = {
 };
 
 // Rule 4 — Hook that pipes remote content into a shell (exfiltration/backdoor).
+// Hooks live in two places: standalone files under a hooks/ directory, and —
+// the layout Claude Code, Cursor and Codex actually execute — wired up inside
+// the agent's settings.json (`hooks.PreToolUse[].hooks[].command`).
+const AGENT_SETTINGS_FILE = /(^|\/)\.(claude|cursor|codex)\/settings(\.local)?\.json$/i;
+
 export const HOOK_001 = {
   id: "HOOK-001",
   severity: "critical",
   description:
     "Hook executes remote content or pipes network output into a shell.",
   scan({ rel, content }) {
-    if (!under(rel, ".claude/hooks") && !under(rel, ".cursor/hooks") && !under(rel, ".codex/hooks")) return null;
+    const isHookFile =
+      under(rel, ".claude/hooks") || under(rel, ".cursor/hooks") || under(rel, ".codex/hooks");
+    if (!isHookFile && !AGENT_SETTINGS_FILE.test(rel)) return null;
     if (!/(curl|wget)\s+[^\n]*(\|\s*(?:ba|z)?sh)|\|base64\s*-d\s*\|/i.test(content)) return null;
     return finding(
       this.id,

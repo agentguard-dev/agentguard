@@ -20,25 +20,11 @@ const VALID_EXIT_ON = ["critical", "high", "medium", "low", "info", "never"];
 const VALID_FORMATS = ["text", "json", "md", "markdown", "summary"];
 const VALID_ENGINES = ["on", "off"];
 
-function fail(message) {
-  console.error(`❌ ${message}`);
-  console.error("   Nutzung: agentguard scan --path <dir> [Optionen] (--help für Details)");
-  process.exit(2);
-}
+// Optionen mit Wert. Alles andere, was mit "-" beginnt, ist ein Fehler:
+// ein vertippter Flag-Name darf das Gate niemals still abschalten.
+const VALUE_FLAGS = new Set(["--path", "--format", "--exit-on", "--engine", "--exclude"]);
 
-function parseArgs(argv) {
-  const args = {
-    path: process.cwd(),
-    format: "text",
-    exitOn: "never",
-    engine: "on",
-    excludes: [],
-    honorIgnore: true,
-  };
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i];
-    if (a === "--help" || a === "-h") {
-      console.log(`Usage: agentguard scan --path <dir> [options]
+const USAGE = `Usage: agentguard scan --path <dir> [options]
 
 Options:
   --path <dir>          Directory to scan (default: cwd)
@@ -48,15 +34,50 @@ Options:
   --exclude <glob>      Exclude matching paths (repeatable)
   --no-ignore           Ignore .agentguard-ignore (sichere CI-Einstellung)
   --engine <on|off>     Include ecc-agentshield engine layer (default: on)
-`);
-      process.exit(0);
+`;
+
+function fail(message) {
+  console.error(`❌ ${message}`);
+  console.error("   Nutzung: agentguard scan --path <dir> [Optionen] (--help für Details)");
+  process.exit(2);
+}
+
+function parseArgs(argv) {
+  if (argv.includes("--help") || argv.includes("-h")) {
+    console.log(USAGE);
+    process.exit(0);
+  }
+  const args = {
+    path: process.cwd(),
+    format: "text",
+    exitOn: "never",
+    engine: "on",
+    excludes: [],
+    honorIgnore: true,
+  };
+  const command = argv[0];
+  if (command !== "scan") {
+    fail(`Unbekanntes Kommando: '${command ?? ""}' (erwartet: scan)`);
+  }
+  for (let i = 1; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === "--no-ignore") {
+      args.honorIgnore = false;
+      continue;
     }
-    if (a === "--path") args.path = argv[++i];
-    else if (a === "--format") args.format = argv[++i];
-    else if (a === "--exit-on") args.exitOn = argv[++i];
-    else if (a === "--engine") args.engine = argv[++i];
-    else if (a === "--exclude") args.excludes.push(argv[++i]);
-    else if (a === "--no-ignore") args.honorIgnore = false;
+    if (!VALUE_FLAGS.has(a)) {
+      fail(`Unbekannte Option: '${a}'`);
+    }
+    const value = argv[++i];
+    // Fehlender Wert war früher ein ungefangener TypeError (Exit 1, Stacktrace).
+    if (value === undefined || value.startsWith("--")) {
+      fail(`Fehlt ein Wert für ${a}`);
+    }
+    if (a === "--path") args.path = value;
+    else if (a === "--format") args.format = value;
+    else if (a === "--exit-on") args.exitOn = value;
+    else if (a === "--engine") args.engine = value;
+    else if (a === "--exclude") args.excludes.push(value);
   }
   return args;
 }

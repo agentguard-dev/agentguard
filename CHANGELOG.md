@@ -52,6 +52,20 @@
 - Verifiziert in Headless-Chrome (DE und EN): Demo-Tabelle rendert, alle
   A11y-Marker vorhanden, keine JS-Fehler.
 
+**Hero-Terminal: Schreibmaschine neu geschrieben (live in Produktion defekt)**
+
+- Die Schreibmaschine im Hero tippte einen **HTML-String Zeichen für Zeichen**
+  und hing an das bestehende `innerHTML` **an**, statt es zu ersetzen. Folge:
+  halbe Tags wurden als Text geparst (`&lt;`) und jeder Schritt schrieb den
+  bisherigen Teiltext erneut dazu. In Produktion sichtbar als
+  `&lt;→→&lt;→→→→→→→ → s→ sc→ sca→ scan→…` statt eines sauberen Terminals.
+- Zusätzlich wuchs der DOM-Knoten bei **jedem 24-ms-Tick** weiter (Layout- und
+  Paint-Last im Hero, auf Mobilgeräten als Ruckeln spürbar).
+- Neu: Segmente enthalten **reinen Text**, gerendert wird über
+  `textContent`/DOM-Knoten — partielles Rendern kann kein Markup mehr
+  zerbrechen. Animi- und `prefers-reduced-motion`-Pfad getrennt geprüft.
+- Belegt per Headless-Chrome vorher/nachher (DE und EN).
+
 ## v0.2.2 (heute)
 
 **Break-Glass-Governance — Ausnahmen ohne Policy-Drift**

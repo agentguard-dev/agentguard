@@ -467,44 +467,82 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var mobile = window.matchMedia('(max-width: 768px)').matches;
 
-  /* Terminal typewriter, ~8s loop, no attack phrases */
+  /* Terminal typewriter, ~8s loop, no attack phrases.
+     Rewritten: segments hold PLAIN text, never markup. The previous version
+     typed an HTML string character by character and appended to the existing
+     innerHTML instead of replacing it, so '"<" + "sp"' became escaped "&lt;"
+     and every step re-appended the partial text — the hero terminal filled up
+     with garbage (and kept growing every 24 ms). */
   var term = document.getElementById('term');
   var frames = [
-    [{t:'<span class="c">$</span> agentguard scan --exit-on critical'}],
-    [{t:'<span class="c">→</span> scanning AGENTS.md …'},{t:'<span class="c">→</span> .mcp/config.json …'},{t:'<span class="c">→</span> skills/export/SKILL.md …'}],
-    [{t:'<span class="r">⚠ INSTR-OVR-001 — hidden instruction detected</span>'}],
-    [{t:'<span class="g">✓ MERGE BLOCKED — grade F</span>'},{t:'<span class="muted">Gate: 1 · Attack: 0</span>'}]
+    [[{c:'c',t:'$'},{t:' agentguard scan --exit-on critical'}]],
+    [
+      [{c:'c',t:'→'},{t:' scanning AGENTS.md …'}],
+      [{c:'c',t:'→'},{t:' .mcp/config.json …'}],
+      [{c:'c',t:'→'},{t:' skills/export/SKILL.md …'}]
+    ],
+    [[{c:'r',t:'⚠ INSTR-OVR-001 — hidden instruction detected'}]],
+    [
+      [{c:'g',t:'✓ MERGE BLOCKED — grade F'}],
+      [{c:'muted',t:'Gate: 1 · Attack: 0'}]
+    ]
   ];
+  function lineLen(line){ var n=0; for (var i=0;i<line.length;i++) n += line[i].t.length; return n; }
+  function lineNode(line, upto){
+    var div = document.createElement('div');
+    var left = (upto === undefined) ? Infinity : upto;
+    for (var i=0;i<line.length && left>0;i++){
+      var seg = line[i];
+      var text = seg.t.slice(0, left);
+      left -= seg.t.length;
+      var span = document.createElement('span');
+      if (seg.c) span.className = seg.c;
+      span.textContent = text;
+      div.appendChild(span);
+    }
+    return div;
+  }
+  function render(fi, li, ci){
+    term.textContent = '';
+    for (var k=0;k<fi;k++) for (var a=0;a<frames[k].length;a++) term.appendChild(lineNode(frames[k][a]));
+    var lines = frames[fi];
+    for (var i=0;i<lines.length;i++){
+      var active = (i === li);
+      var div = lineNode(lines[i], active ? Math.min(ci, lineLen(lines[i])) : undefined);
+      if (active){ var cur=document.createElement('span'); cur.className='cursor'; div.appendChild(cur); }
+      term.appendChild(div);
+    }
+  }
+  function renderAll(){
+    term.textContent = '';
+    for (var k=0;k<frames.length;k++) for (var a=0;a<frames[k].length;a++) term.appendChild(lineNode(frames[k][a]));
+  }
   if (reduced){
-    term.innerHTML = frames.map(function(f){return f.map(function(l){return l.t}).join('\n')}).join('\n');
+    renderAll();
   } else {
     var fi=0, li=0, ci=0;
     function step(){
-      var line = frames[fi][li];
-      if (ci === 0 && li === 0 && fi > 0){
-        var keep = '';
-        for (var k=0;k<fi;k++) keep += frames[k].map(function(l){return l.t}).join('\n') + '\n';
-        term.innerHTML = keep;
-      }
-      var html = term.innerHTML.replace(/<span class="cursor"><\/span>$/,'');
-      if (ci <= line.t.length){
-        term.innerHTML = html + line.t.substring(0, ci) + '<span class="cursor"></span>';
+      var lines = frames[fi], full = lineLen(lines[li]);
+      if (ci <= full){
+        render(fi, li, ci);
         ci++;
-        setTimeout(step, ci > line.t.length ? 500 : 24);
+        setTimeout(step, ci > full ? 500 : 24);
         return;
       }
       li++; ci = 0;
-      if (li >= frames[fi].length){
+      if (li >= lines.length){
         li = 0;
         if (fi === frames.length - 1 && mobile){
           // Mobil: einmalige Wiedergabe, Ende beim Block-Moment (kein Loop).
-          term.innerHTML = term.innerHTML.replace(/<span class="cursor"><\/span>$/,'');
+          render(fi, lines.length - 1, full);
           return;
         }
         fi = (fi + 1) % frames.length;
-        if (fi === 0) term.innerHTML = '';
-        setTimeout(step, fi === 0 ? 400 : 1000);
-      } else setTimeout(step, 340);
+        if (fi === 0){ term.textContent = ''; setTimeout(step, 400); return; }
+        setTimeout(step, 1000);
+        return;
+      }
+      setTimeout(step, 340);
     }
     step();
   }

@@ -89,6 +89,11 @@ section.alt{background:var(--bg2)}
 h2{font-size:clamp(1.7rem,3vw,2.4rem);font-weight:800;letter-spacing:-.02em;margin-bottom:10px}
 .lead{color:var(--muted);max-width:640px;margin-bottom:38px}
 .cards{display:grid;gap:16px}
+/* Grid-Kinder duerfen unter ihre min-content-Breite schrumpfen. Ohne min-width:0
+   zwingt langer Text (z. B. "Deterministisch — nicht beeinflussbar") die
+   1fr-Spalten auf min-content: das Grid waechst ueber den Viewport und
+   main{overflow-x:clip} schneidet den Text still ab (auf 375px: Karten bis 408px). */
+.cards > *,.stats > *{min-width:0;overflow-wrap:break-word}
 .cards.c2{grid-template-columns:repeat(2,1fr)}
 .cards.c3{grid-template-columns:repeat(3,1fr)}
 .cards.c4{grid-template-columns:repeat(4,1fr)}
@@ -174,6 +179,11 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
   .cards.c3{grid-template-columns:1fr}
   .cards.c4{grid-template-columns:1fr}
   header.hero{padding:48px 0}
+}
+/* Muss NACH dem 768px-Block stehen: gleiche Spezifitaet, sonst gewinnt dessen
+   "1fr 1fr" und die Karten bleiben auf kleinen Phones ~155px schmal. */
+@media(max-width:480px){
+  .cards.c2,.cards.c4,.stats,.steps{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}

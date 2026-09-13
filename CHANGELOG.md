@@ -66,6 +66,22 @@
   zerbrechen. Animi- und `prefers-reduced-motion`-Pfad getrennt geprüft.
 - Belegt per Headless-Chrome vorher/nachher (DE und EN).
 
+**Mobile: Text wurde auf kleinen Phones abgeschnitten (behoben)**
+
+- Auf 320px/375px liefen Karten **88px bzw. 33px** ueber den Viewport. Ursache:
+  Grid-Kinder haben per Default `min-width:auto` und schrumpfen nicht unter
+  ihre min-content-Breite — lange Ueberschriften (`Deterministic — not
+  influenceable`) zwangen die `1fr 1fr`-Spalten auf 172/195px, das Grid wurde
+  breiter als der Container. `main{overflow-x:clip}` hat den Text dann still
+  abgeschnitten: sichtbar als "Proof, n..." / "Determ... not influen...".
+- Fix 1: `.cards > *,.stats > *{min-width:0;overflow-wrap:break-word}` —
+  verhindert Grid-Overflow prinzipiell, nicht nur fuer diesen Text.
+- Fix 2: unter 480px einspaltig statt zwei Spalten (155px je Karte war zu eng).
+  Der Block steht bewusst NACH dem 768px-Block, sonst gewinnt dessen "1fr 1fr"
+  bei gleicher Spezifitaet.
+- Gemessen in DE und EN ueber 320/375/414/480/600/768/1024/1400px:
+  Overflow ueberall 0, Desktop-Spaltenbreiten unveraendert (1024/1400 identisch).
+
 ## v0.2.2 (heute)
 
 **Break-Glass-Governance — Ausnahmen ohne Policy-Drift**

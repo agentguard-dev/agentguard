@@ -59,6 +59,7 @@ nav{position:sticky;top:0;z-index:50;background:rgba(5,7,13,.72);backdrop-filter
 .lang-switch{display:flex;border:1px solid var(--border);border-radius:999px;overflow:hidden;font-size:.82rem}
 .lang-switch a{padding:5px 12px;color:var(--muted)}
 .lang-switch a.active{background:rgba(34,211,238,.12);color:var(--cyan);font-weight:700}
+.cta-short{display:none}
 .btn{position:relative;display:inline-block;background:linear-gradient(135deg,var(--cyan),#0EA5C4);color:#031018;font-weight:800;padding:13px 24px;border-radius:10px;overflow:hidden;transition:transform .2s,box-shadow .2s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(34,211,238,.35)}
 .btn::after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);animation:shimmer 3.4s infinite}
@@ -169,16 +170,45 @@ footer a{text-decoration:underline;text-underline-offset:2px}
   footer a{display:inline-flex;align-items:center;min-height:44px;padding:0 6px}
 section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:center;min-height:44px;padding:0 8px}
 @media(max-width:480px){
-  nav .btn.sm{display:none}
-  .nav-inner{gap:10px}
+  /* CTA bleibt sichtbar (staerkstes Conversion-Element): statt den Button
+     auszublenden werden Logo-Wortmarke, Sprachschalter und Paddings kompakter. */
+  .nav-inner{gap:8px}
+  .logo{font-size:.88rem;gap:7px}
+  .lang-switch{font-size:.76rem}
+  .lang-switch a{padding:5px 9px}
+  nav .btn.sm{padding:10px 12px;font-size:.8rem}
 }
 @media(max-width:768px){
-  .nav-links{display:none}
+  /* Navigation bleibt auf dem Handy erreichbar: die Links werden zu einer
+     horizontal scrollbaren Zeile unter dem Logo statt ausgeblendet zu werden. */
+  .nav-inner{flex-wrap:wrap;height:auto;padding-top:9px;gap:10px 12px}
+  .nav-links{order:3;width:100%;margin-left:0;gap:16px;overflow-x:auto;
+             white-space:nowrap;padding-bottom:9px;-webkit-overflow-scrolling:touch;
+             scrollbar-width:none}
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-links a{display:inline-flex;align-items:center;min-height:34px;flex:none}
   .hero-grid{grid-template-columns:1fr;gap:34px}
   .cards.c2,.cards.c4,.stats,.steps{grid-template-columns:1fr 1fr}
   .cards.c3{grid-template-columns:1fr}
   .cards.c4{grid-template-columns:1fr}
   header.hero{padding:48px 0}
+  /* Die Nav ist mobil zweizeilig und damit hoeher — Sprungziele brauchen mehr Luft. */
+  html{scroll-padding-top:116px}
+}
+/* Auf schmalen Phones passt die volle CTA-Beschriftung nicht mehr neben Logo und
+   Sprachschalter; sie brach sonst in eine dritte Zeile (Nav dann 163px hoch).
+   Steht nach dem 768px-Block, damit die Reihenfolge eindeutig ist. */
+@media(max-width:560px){
+  .cta-full{display:none}
+  .cta-short{display:inline}
+}
+/* 320px (iPhone SE 1. Gen): selbst die Kurzform passt nicht mehr neben Logo und
+   Sprachschalter. Die Wortmarke weicht — der Link traegt aria-label="AgentGuard",
+   der Name bleibt also fuer Screenreader erhalten. */
+@media(max-width:360px){
+  .logo-text{display:none}
+  .lang-switch a{padding:5px 7px}
+  nav .btn.sm{padding:10px 10px}
 }
 /* Muss NACH dem 768px-Block stehen: gleiche Spezifitaet, sonst gewinnt dessen
    "1fr 1fr" und die Karten bleiben auf kleinen Phones ~155px schmal. */
@@ -223,15 +253,15 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
 
 <nav>
   <div class="wrap nav-inner">
-    <a class="logo" href="#top">
+    <a class="logo" href="#top" aria-label="AgentGuard">
       <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
-      AgentGuard
+      <span class="logo-text">AgentGuard</span>
     </a>
     <div class="nav-links">
       <a href="#threats">Bedrohungen</a><a href="#demo">Live-Demo</a><a href="#setup">Einrichten</a><a href="#pricing">Preise</a><a href="#faq">FAQ</a>
     </div>
     <div class="lang-switch"><a href="index.html" class="active" aria-current="page">DE</a><a href="index-en.html" hreflang="en" lang="en">EN</a></div>
-    <a class="btn sm" href="https://github.com/marketplace/actions/agentguard-security" target="_blank" rel="noopener" data-gc-event="nav_install">Kostenlos einrichten</a>
+    <a class="btn sm" href="https://github.com/marketplace/actions/agentguard-security" target="_blank" rel="noopener" data-gc-event="nav_install"><span class="cta-full">Kostenlos einrichten</span><span class="cta-short">Kostenlos</span></a>
   </div>
 </nav>
 

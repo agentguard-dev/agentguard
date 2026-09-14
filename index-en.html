@@ -59,6 +59,7 @@ nav{position:sticky;top:0;z-index:50;background:rgba(5,7,13,.72);backdrop-filter
 .lang-switch{display:flex;border:1px solid var(--border);border-radius:999px;overflow:hidden;font-size:.82rem}
 .lang-switch a{padding:5px 12px;color:var(--muted)}
 .lang-switch a.active{background:rgba(34,211,238,.12);color:var(--cyan);font-weight:700}
+.cta-short{display:none}
 .btn{position:relative;display:inline-block;background:linear-gradient(135deg,var(--cyan),#0EA5C4);color:#031018;font-weight:800;padding:13px 24px;border-radius:10px;overflow:hidden;transition:transform .2s,box-shadow .2s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(34,211,238,.35)}
 .btn::after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);animation:shimmer 3.4s infinite}
@@ -89,10 +90,11 @@ section.alt{background:var(--bg2)}
 h2{font-size:clamp(1.7rem,3vw,2.4rem);font-weight:800;letter-spacing:-.02em;margin-bottom:10px}
 .lead{color:var(--muted);max-width:640px;margin-bottom:38px}
 .cards{display:grid;gap:16px}
-/* Grid-Kinder duerfen unter ihre min-content-Breite schrumpfen. Ohne min-width:0
-   zwingt langer Text (z. B. "Deterministic — not influenceable") die 1fr-Spalten
-   auf min-content: das Grid waechst ueber den Viewport und main{overflow-x:clip}
-   schneidet den Text still ab (gemessen auf 375px: Karten bis 408px). */
+/* Grid children must be allowed to shrink below their min-content width.
+   Without min-width:0, long headings (e.g. "Deterministic — not influenceable")
+   push the 1fr tracks to min-content: the grid grows past the viewport and
+   main{overflow-x:clip} silently cuts the text off (measured at 375px: cards
+   reached 408px). */
 .cards > *,.stats > *{min-width:0;overflow-wrap:break-word}
 .cards.c2{grid-template-columns:repeat(2,1fr)}
 .cards.c3{grid-template-columns:repeat(3,1fr)}
@@ -169,19 +171,48 @@ footer a{text-decoration:underline;text-underline-offset:2px}
   footer a{display:inline-flex;align-items:center;min-height:44px;padding:0 6px}
 section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:center;min-height:44px;padding:0 8px}
 @media(max-width:480px){
-  nav .btn.sm{display:none}
-  .nav-inner{gap:10px}
+  /* Keep the CTA visible (strongest conversion element): instead of hiding the
+     button, tighten the logo wordmark, language switch and paddings. */
+  .nav-inner{gap:8px}
+  .logo{font-size:.88rem;gap:7px}
+  .lang-switch{font-size:.76rem}
+  .lang-switch a{padding:5px 9px}
+  nav .btn.sm{padding:10px 12px;font-size:.8rem}
 }
 @media(max-width:768px){
-  .nav-links{display:none}
+  /* Keep navigation reachable on phones: the links become a horizontally
+     scrollable row under the logo instead of being hidden. */
+  .nav-inner{flex-wrap:wrap;height:auto;padding-top:9px;gap:10px 12px}
+  .nav-links{order:3;width:100%;margin-left:0;gap:16px;overflow-x:auto;
+             white-space:nowrap;padding-bottom:9px;-webkit-overflow-scrolling:touch;
+             scrollbar-width:none}
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-links a{display:inline-flex;align-items:center;min-height:34px;flex:none}
   .hero-grid{grid-template-columns:1fr;gap:34px}
   .cards.c2,.cards.c4,.stats,.steps{grid-template-columns:1fr 1fr}
   .cards.c3{grid-template-columns:1fr}
   .cards.c4{grid-template-columns:1fr}
   header.hero{padding:48px 0}
+  /* The nav is two rows tall on mobile — anchors need more clearance. */
+  html{scroll-padding-top:116px}
 }
-/* Muss NACH dem 768px-Block stehen: gleiche Spezifitaet, sonst gewinnt dessen
-   "1fr 1fr" und die Karten bleiben auf kleinen Phones ~155px schmal. */
+/* On narrow phones the full CTA label no longer fits next to the logo and the
+   language switch; it wrapped onto a third row (nav became 163px tall). Placed
+   after the 768px block so the cascade order is unambiguous. */
+@media(max-width:560px){
+  .cta-full{display:none}
+  .cta-short{display:inline}
+}
+/* 320px (1st-gen iPhone SE): even the short label no longer fits next to the
+   logo and language switch. The wordmark steps aside — the link carries
+   aria-label="AgentGuard", so the name stays available to screen readers. */
+@media(max-width:360px){
+  .logo-text{display:none}
+  .lang-switch a{padding:5px 7px}
+  nav .btn.sm{padding:10px 10px}
+}
+/* Must come AFTER the 768px block: same specificity, otherwise its "1fr 1fr"
+   wins and cards stay ~155px wide on small phones. */
 @media(max-width:480px){
   .cards.c2,.cards.c4,.stats,.steps{grid-template-columns:1fr}
 }
@@ -223,15 +254,15 @@ section#pricing p.muted > a,#trust p.muted > a{display:inline-flex;align-items:c
 
 <nav>
   <div class="wrap nav-inner">
-    <a class="logo" href="#top">
+    <a class="logo" href="#top" aria-label="AgentGuard">
       <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
-      AgentGuard
+      <span class="logo-text">AgentGuard</span>
     </a>
     <div class="nav-links">
       <a href="#threats">Threats</a><a href="#demo">Live demo</a><a href="#setup">Setup</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
     </div>
     <div class="lang-switch"><a href="index.html" hreflang="de" lang="de">DE</a><a href="index-en.html" class="active" aria-current="page">EN</a></div>
-    <a class="btn sm" href="https://github.com/marketplace/actions/agentguard-security" target="_blank" rel="noopener" data-gc-event="nav_install">Set up free</a>
+    <a class="btn sm" href="https://github.com/marketplace/actions/agentguard-security" target="_blank" rel="noopener" data-gc-event="nav_install"><span class="cta-full">Set up free</span><span class="cta-short">Set up</span></a>
   </div>
 </nav>
 
